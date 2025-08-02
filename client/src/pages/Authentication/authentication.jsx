@@ -56,7 +56,7 @@ function Authentication_page() {
         setToken(data.token);
         alert('Authentication successful!');
         navigate('/dashboard');
-      }
+      } 
     } catch (err) {
       console.error(err);
       setError('Something went wrong');
