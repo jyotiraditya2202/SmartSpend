@@ -16,6 +16,7 @@ router.post('/insert',auth, async (req, res) => {
     console.log("Inserting the spend record");
 
     const user_id = req.user.user.id;
+    console.log(user_id);
     const { title, category, spend } = req.body;
 
     const newSpend = new SpendData({
@@ -34,37 +35,29 @@ router.post('/insert',auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+// @route   DELETE /api/spend/delete/:id
+// @desc    Delete a spend record by ID for the logged-in user
 
-/*
-// @route   POST /api/auth/login
-// @desc    Authenticate user & get token
-router.post('/login', async (req, res) => {
-  console.log("Received login request:", req.body);
-  
-  const { email, password } = req.body;
+router.delete('/delete/:id', auth, async (req, res) => {
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: 'Invalid Credentials' });
+    console.log(req.body);
+    const user_id = req.user.user.id;
+    const spendId = req.params.id;
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
+    // Check if the spend record exists and belongs to the user
+    const spendRecord = await SpendData.findOne({ _id: spendId, user_id });
 
-    const payload = { user: { id: user.id } };
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    if (!spendRecord) {record
+      return res.status(404).json({ error: 'Spend  not found or unauthorized' });
+    }
+
+    await SpendData.deleteOne({ _id: spendId });
+
+    res.status(200).json({ message: 'Spend record deleted successfully' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete spend record' });
   }
 });
 
 module.exports = router;
-*/

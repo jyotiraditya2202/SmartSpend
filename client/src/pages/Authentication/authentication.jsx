@@ -55,6 +55,7 @@ function Authentication_page() {
       } else {
         setToken(data.token);
         alert('Authentication successful!');
+        localStorage.setItem('token', data.token);
         navigate('/dashboard');
       } 
     } catch (err) {

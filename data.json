@@ -1,0 +1,100 @@
+[
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Grocery - Reliance Fresh",
+    "category": "food",
+    "spend": 1100,
+    "date": { "$date": "2025-07-01T11:30:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Bus Pass Recharge",
+    "category": "transport",
+    "spend": 700,
+    "date": { "$date": "2025-07-03T08:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Swiggy Dinner",
+    "category": "food",
+    "spend": 350,
+    "date": { "$date": "2025-07-08T20:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Internet Bill",
+    "category": "utilities",
+    "spend": 999,
+    "date": { "$date": "2025-07-09T14:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Weekend Movie",
+    "category": "entertainment",
+    "spend": 600,
+    "date": { "$date": "2025-07-07T18:30:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Electricity Bill",
+    "category": "utilities",
+    "spend": 1350,
+    "date": { "$date": "2025-07-15T10:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Domino's Pizza",
+    "category": "food",
+    "spend": 590,
+    "date": { "$date": "2025-07-13T19:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Gym Monthly Fee",
+    "category": "health",
+    "spend": 1200,
+    "date": { "$date": "2025-07-12T09:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Ola Ride - Office",
+    "category": "transport",
+    "spend": 300,
+    "date": { "$date": "2025-07-21T08:45:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Shopping - T-Shirt",
+    "category": "shopping",
+    "spend": 1200,
+    "date": { "$date": "2025-07-22T15:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Coffee Date",
+    "category": "food",
+    "spend": 450,
+    "date": { "$date": "2025-07-23T18:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Amazon Order - Books",
+    "category": "shopping",
+    "spend": 980,
+    "date": { "$date": "2025-07-28T13:00:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Gas Refill",
+    "category": "utilities",
+    "spend": 1150,
+    "date": { "$date": "2025-07-30T17:30:00.000Z" }
+  },
+  {
+    "user_id": { "$oid": "688e1839db832e143afcd739" },
+    "title": "Final Weekend - Club Night",
+    "category": "entertainment",
+    "spend": 2000,
+    "date": { "$date": "2025-07-31T22:00:00.000Z" }
+  }
+]

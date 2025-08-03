@@ -25,6 +25,7 @@ app.use(express.json());
 // Define routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/spend', require('./routes/curlSpend'));
+app.use('/api/spendutils', require('./routes/spendUtils'));
 
 
 // Use environment variable for port, fallback to 5000
