@@ -1,14 +1,38 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const SpendData = require('../models/SpendData');
 const auth = require('../middleware/auth');
 
 require('dotenv').config();
 
+// @route   POST /api/spendutils/getbudget
+// @desc    it gives budget od the user 
+
+router.post('/getbudget', auth, async (req, res) => {
+  try {
+
+    const userId = req.user.user.id;
+
+    const user = await User.findOne({_id: userId});
+
+    if(!user){
+        return res.status(404).json({error: 'user not found while fetching budget'});
+    }
+
+    const budget = user.budget;
+
+    if(budget == null){
+        return res.status(200).json({budget: null});
+    }
+    res.status(200).json({ budget: budget });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // @route   POST /api/spendutils/getammount
 // @desc    in req give the start and end date and it will give the total spen between them
