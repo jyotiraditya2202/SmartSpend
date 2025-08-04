@@ -1,10 +1,11 @@
 
 import React from 'react';
+import axios from 'axios';
 
 export const fetchBudget = async (token) => {
   try {
     const response = await fetch('http://localhost:5000/api/spendutils/getbudget', {
-      method: 'POST',
+      method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
@@ -47,4 +48,21 @@ export const fetchSpend = async (token, startDate, endDate) => {
     console.error("fetchSpend error:", error);
     return null;
   }
+};
+
+export const insertSpend = async (data) => {
+  const token = localStorage.getItem('token'); // or however you store your auth token
+
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/spend/insert`,
+    data,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
 };

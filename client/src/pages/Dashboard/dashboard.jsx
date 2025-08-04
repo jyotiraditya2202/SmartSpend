@@ -1,15 +1,9 @@
 import React from 'react';
 import './Dashboard.css';
-import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus } from 'react-icons/fi';
+import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus, FiArrowDown, FiTrash2 } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
-import * as spendUtils from '../../api/spendUtils';
+import * as spendUtils from '../../api/spendUtils'; 
 import { useDashboardStore } from '../../store/dashboardStore';
-
-const handleAddSpend = () => {
-  // Implement your modal trigger or navigation
-  console.log("Add Spend Clicked");
-};
-
 
 const Icon = ({ path, className, style }) => (
   <svg
@@ -29,17 +23,17 @@ const Icon = ({ path, className, style }) => (
   </svg>
 );
 
-// SVG paths for the icons used in the dashboard
-const iconPaths = {
-  FiTarget: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
-  FiDollarSign: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
-  FiBarChart2: "M18 20V10M12 20V4M6 20v-6",
-  FiTrendingUp: "M23 6l-9.5 9.5-5-5L1 18",
-  FiPlus: "M12 5v14M5 12h14",
-  FiArrowUp: "M12 19V5M5 12l7-7 7 7",
-  FiArrowDown: "M12 5v14M19 12l-7 7-7-7",
-  FiX: "M18 6L6 18M6 6l12 12"
-};
+// // SVG paths for the icons used in the dashboard
+// const iconPaths = {
+//   FiTarget: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+//   FiDollarSign: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+//   FiBarChart2: "M18 20V10M12 20V4M6 20v-6",
+//   FiTrendingUp: "M23 6l-9.5 9.5-5-5L1 18",
+//   FiPlus: "M12 5v14M5 12h14",
+//   FiArrowUp: "M12 19V5M5 12l7-7 7 7",
+//   FiArrowDown: "M12 5v14M19 12l-7 7-7-7",
+//   FiX: "M18 6L6 18M6 6l12 12"
+// };
 
 // model
 const spendCategories = [
@@ -157,32 +151,31 @@ const Dashboard = () => {
     setIsModalOpen(true);
   };
   
-  const handleModalSubmit = (newRecord) => {
-    // This is where you would make a real API call to your backend
-    // using your `spendUtils` module.
-    // For example:
-    // spendUtils.insert(newRecord)
-    //   .then(response => {
-    //     console.log('Record inserted successfully:', response);
-    //     // You might want to re-fetch the data here to update the dashboard
-    //   })
-    //   .catch(error => {
-    //     console.error('Error inserting record:', error);
-    //   });
+  const [recentSpends, setRecentSpends] = useState([
+    { id: 1, title: 'Groceries', category: 'Groceries', spend: 75.25 },
+    { id: 2, title: 'Dinner', category: 'Dining Out', spend: 45.00 },
+    { id: 3, title: 'Movie tickets', category: 'Entertainment', spend: 22.50 },
+    { id: 4, title: 'Gas', category: 'Transportation', spend: 35.00 },
+    { id: 5, title: 'Internet bill', category: 'Utilities', spend: 60.00 },
+  ]);
 
-    // For now, we'll just update the mock data.
-    setSpendData(prevData => ({
-      ...prevData,
-      thisMonthSpend: prevData.thisMonthSpend + newRecord.spend
-    }));
-    console.log("Submitting record via API:", newRecord);
+
+  const handleModalSubmit = async (newRecord) => {
+    try {
+        const response = await spendUtils.insertSpend(newRecord);
+        console.log('Record inserted successfully:', response);
+
+        // Optionally refetch the updated data via initialize()
+        initialize();
+    } catch (error) {
+        console.error('Error inserting record:', error);
+        alert('Failed to insert spend record. Please try again.');
+    }
   };
 
   if (!spendData) {
     return <p>Loading...</p>;
   }
-
-  
 
   return (
     <>
@@ -267,6 +260,27 @@ const Dashboard = () => {
 
           </div>
           <p className="card-info">Based on spending habits</p>
+        </div>
+
+        {/* recent spend data */}
+        <div className="recent-spends-container">
+            <h2>Recent Spends</h2>
+            <ul className="recent-spends-list">
+                {recentSpends.map((spend) => (
+                    <li key={spend.id} className="spend-item">
+                        <div className="spend-details">
+                            <h4>{spend.title}</h4>
+                            <p>{spend.category}</p>
+                        </div>
+                        <div className="spend-right-section">
+                            <span className="spend-amount">${spend.spend.toFixed(2)}</span>
+                            <button className="delete-btn" onClick={() => handleDeleteSpend(spend.id)}>
+                                <FiTrash2 className="delete-btn" style={{ height: '20px', width: '20px' }} />
+                            </button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
         </div>
 
       </main>

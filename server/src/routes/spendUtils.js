@@ -83,3 +83,24 @@ router.post('/getammount', auth, async (req, res) => {
 });
 
 module.exports = router;
+
+// @route   POST /api/spendutils/getbudget
+// @desc    it gives budget od the user 
+
+router.post('/recentSpend', auth, async (req, res) => {
+  try {
+
+    const userId = req.user.user.id;
+
+    const user = await User.findOne({_id: userId});
+
+    if(!user){
+        return res.status(404).json({error: 'user not found while fetching budget'});
+    }
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
