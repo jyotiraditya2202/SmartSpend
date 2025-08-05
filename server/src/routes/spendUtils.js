@@ -84,20 +84,52 @@ router.post('/getammount', auth, async (req, res) => {
 
 module.exports = router;
 
-// @route   POST /api/spendutils/getbudget
-// @desc    it gives budget od the user 
+// @route   POST /api/spendutils/recentSpend
+// @desc    recentSpendRecords 
 
 router.post('/recentSpend', auth, async (req, res) => {
   try {
-
     const userId = req.user.user.id;
 
-    const user = await User.findOne({_id: userId});
-
-    if(!user){
-        return res.status(404).json({error: 'user not found while fetching budget'});
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found while fetching budget' });
     }
 
+    // Get last 5 spends by this user, sorted by latest
+    const recentSpends = await SpendData.find({ user_id: userId })
+      .sort({ date: -1 }) // assuming you have timestamps
+      .limit(5)
+      .select('title category spend date');
+
+    console.log(recentSpends);
+    res.status(200).json(recentSpends);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// @route   POST /api/spendutils/allSpend
+// @desc    recentSpendRecords 
+
+router.post('/allSpend', auth, async (req, res) => {
+  try {
+    const userId = req.user.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found while fetching budget' });
+    }
+
+    // Get last 5 spends by this user, sorted by latest
+    const recentSpends = await SpendData.find({ user_id: userId })
+      .sort({ date: -1 }) // assuming you have timestamps
+      .select('title category spend date');
+
+    console.log(recentSpends);
+    res.status(200).json(recentSpends);
 
   } catch (err) {
     console.error(err);

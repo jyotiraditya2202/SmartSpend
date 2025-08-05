@@ -2,6 +2,9 @@
 import React from 'react';
 import axios from 'axios';
 
+// --- env usge in api routes is yet to make ---
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const fetchBudget = async (token) => {
   try {
     const response = await fetch('http://localhost:5000/api/spendutils/getbudget', {
@@ -65,4 +68,50 @@ export const insertSpend = async (data) => {
   );
 
   return response.data;
+};
+
+export const getRecentSpends = async () => {
+  try {
+    const token = localStorage.getItem('token'); // assuming you store JWT token here
+
+    const res = await axios.post(
+      "http://localhost:5000/api/spendutils/recentSpend",
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    console.error('Error fetching recent spends:', err);
+    return null;
+  }
+};
+
+export const getAllSpends = async () => {
+  try {
+    const token = localStorage.getItem('token'); // assuming you store JWT token here
+
+    const res = await axios.post(
+      "http://localhost:5000/api/spendutils/allSpend",
+      {},
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    console.error('Error fetching all spends:', err);
+    return null;
+  }
+
+
 };
