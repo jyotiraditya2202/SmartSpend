@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'; // No need to import BrowserRo
 
 import Authentication_page from "./pages/Authentication/authentication";
 import Dashboard from "./pages/Dashboard/dashboard";
+import ChatSection from "./pages/chat_bot/chat_bot";
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
       
       {/* Route for the dashboard page */}
       <Route path="/dashboard" element={<Dashboard />} />
+
+      {/* Route for the chat page */}
+      <Route path="/chat" element={<ChatSection />} />
     </Routes>
   );
 }

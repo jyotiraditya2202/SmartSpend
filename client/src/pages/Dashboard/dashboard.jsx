@@ -1,10 +1,13 @@
 import React from 'react';
 import './Dashboard.css';
-import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus, FiArrowDown, FiTrash2, FiList, FiX } from 'react-icons/fi';
+import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus, FiArrowDown, FiTrash2, FiList, FiX, FiMessageSquare } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import * as spendUtils from '../../api/spendUtils'; 
 import { useDashboardStore } from '../../store/dashboardStore';
+import ChatSection from '../chat_bot/chat_bot';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 // model
 const spendCategories = [
@@ -143,6 +146,9 @@ const AllRecordsModal = ({ spends, onClose, onDelete }) => {
 };
 
 const Dashboard = () => {
+
+    const navigate = useNavigate();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRecordsModalOpen, setIsRecordsModalOpen] = useState(false);
     const {
@@ -154,6 +160,14 @@ const Dashboard = () => {
     initialize
   } = useDashboardStore();
   
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  useEffect(() => {
+    if (isChatOpen) {
+      navigate('/chat');
+    }
+  }, [isChatOpen, navigate]);
+
   const efficiencyScore = useDashboardStore(state => state.efficiencyScore);
   const efficiencyBadge = useDashboardStore(state => state.efficiencyBadge);
 
@@ -397,7 +411,10 @@ const Dashboard = () => {
           onDelete={handleDeleteAllSpend}
         />
       )}
-      
+
+    <button className="floating-chat-btn" onClick={() => setIsChatOpen(true)}>
+        <FiMessageSquare style={{ height: '24px', width: '24px', strokeWidth: '3' }} />
+    </button>
     </>
   );
 };

@@ -618,6 +618,31 @@ body::-webkit-scrollbar {
     margin-top: 0.5rem;
   }
 }
+/* Floating button for chat */
+.floating-chat-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--primary-blue);
+    color: var(--text-primary);
+    border: none;
+    padding: 1rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 999;
+}
+
+.floating-chat-btn:hover {
+    background-color: #3876c7;
+    transform: scale(1.1);
+}
 
 @media (max-width: 600px) {
   body {
