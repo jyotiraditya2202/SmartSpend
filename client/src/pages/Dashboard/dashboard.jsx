@@ -8,6 +8,8 @@ import ChatSection from '../chat_bot/chat_bot';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Use Vite style env if applicable
+
 
 // model
 const spendCategories = [
@@ -221,7 +223,7 @@ const Dashboard = () => {
             const token = localStorage.getItem('token');
 
             const res = await axios.delete(
-            `http://localhost:5000/api/spend/delete/${id}`,
+            `${BASE_URL}/api/spend/delete/${id}`,
             {
                 headers: {
                 Authorization: `Bearer ${token}`,
@@ -243,7 +245,7 @@ const Dashboard = () => {
             const token = localStorage.getItem('token');
 
             const res = await axios.delete(
-            `http://localhost:5000/api/spend/delete/${id}`,
+            `${BASE_URL}/api/spend/delete/${id}`,
             {
                 headers: {
                 Authorization: `Bearer ${token}`,

@@ -7,7 +7,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const fetchBudget = async (token) => {
   try {
-    const response = await fetch('http://localhost:5000/api/spendutils/getbudget', {
+    const response = await fetch(`${BASE_URL}/api/spendutils/getbudget`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ export const fetchBudget = async (token) => {
 
 export const fetchSpend = async (token, startDate, endDate) => {
   try {
-    const response = await fetch('http://localhost:5000/api/spendutils/getammount', {
+    const response = await fetch(`${BASE_URL}/api/spendutils/getammount`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ export const getRecentSpends = async () => {
     const token = localStorage.getItem('token'); // assuming you store JWT token here
 
     const res = await axios.post(
-      "http://localhost:5000/api/spendutils/recentSpend",
+      `${BASE_URL}/api/spendutils/recentSpend`,
       {},
       {
         headers: {
@@ -97,7 +97,7 @@ export const getAllSpends = async () => {
     const token = localStorage.getItem('token'); // assuming you store JWT token here
 
     const res = await axios.post(
-      "http://localhost:5000/api/spendutils/allSpend",
+      `${BASE_URL}/api/spendutils/allSpend`,
       {},
       {
         headers: {
