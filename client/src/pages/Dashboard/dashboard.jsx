@@ -1,5 +1,5 @@
 import React from 'react';
-import './Dashboard.css';
+import './dashboard.css';
 import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus, FiArrowDown, FiTrash2, FiList, FiX, FiMessageSquare } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import * as spendUtils from '../../api/spendUtils'; 
