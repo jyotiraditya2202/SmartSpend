@@ -23,7 +23,7 @@ router.post('/insert',auth, async (req, res) => {
       user_id,
       title,
       category,
-      spend
+      spend,
     });
 
     await newSpend.save();

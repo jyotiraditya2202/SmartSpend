@@ -133,6 +133,29 @@ export const useDashboardStore = create((set, get) => ({
     });
   },
 
+  computeDailySpend: () => {
+    const { budget, spendData } = get();
+
+    if (budget == null || !spendData) {
+      set({ efficiencyScore: 0, efficiencyBadge: 'Poor' });
+      return;
+    }
+
+    const saving = budget - spendData.thisMonthSpend;
+    const score = Math.max(0, Math.min(100, (saving / budget) * 100)); // clamp to [0, 100]
+
+    let badge = 'Poor';
+    if (score >= 80) badge = 'Excellent';
+    else if (score >= 60) badge = 'Great';
+    else if (score >= 40) badge = 'Good';
+    else if (score >= 20) badge = 'Average';
+
+    set({
+      efficiencyScore: Math.round(score),
+      efficiencyBadge: badge
+    });
+  },
+
   // One-shot: load everything
   initialize: async () => {
     await get().fetchBudget();

@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom'; // No need to import BrowserRo
 import Authentication_page from "./pages/Authentication/authentication";
 import Dashboard from "./pages/Dashboard/dashboard";
 import ChatSection from "./pages/chat_bot/chat_bot";
+import AnalyticsPage from "./pages/Analytics/analytics";
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
 
       {/* Route for the chat page */}
       <Route path="/chat" element={<ChatSection />} />
+
+      {/* Route for the Analytics page */}
+      <Route path="/analytics" element={<AnalyticsPage />} />
     </Routes>
   );
 }

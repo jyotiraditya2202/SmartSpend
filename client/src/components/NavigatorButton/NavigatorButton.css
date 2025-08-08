@@ -1,0 +1,67 @@
+.fab-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem; /* Space between popped-up buttons */
+}
+
+.fab-button {
+    background-color: var(--primary-blue);
+    color: var(--text-primary);
+    border: none;
+    padding: 1rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+    width: 4rem; /* Standard FAB size */
+    height: 4rem; /* Standard FAB size */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+.fab-button:hover {
+    background-color: #3876c7;
+    transform: scale(1.05);
+}
+
+.fab-child-button {
+    
+    background-color: #3876c7; /* Different background for children */
+    color: var(--text-primary);
+    border: none;
+    padding: 1rem 1rem;
+    font-size: 1rem;
+    font-weight: 1000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+    transform: translateY(0); /* Initial state for animation */
+    opacity: 1; /* Initial state for animation */
+    white-space: nowrap; /* Prevent text wrapping */
+    border-radius: 50%;
+    width: 4.2rem; 
+    height: 4.2rem;
+    flex-shrink: 0;
+}
+
+/* Animation for children buttons */
+.fab-child-button.hidden {
+    transform: translateY(10px); /* Move slightly down when hidden */
+    opacity: 0;
+    pointer-events: none; /* Disable interaction when hidden */
+}
+
+.fab-child-button:hover {
+    background-color: #40517B;
+}

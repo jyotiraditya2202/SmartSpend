@@ -7,6 +7,7 @@ import { useDashboardStore } from '../../store/dashboardStore';
 import ChatSection from '../chat_bot/chat_bot';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import NavigatorButton from '../../components/NavigatorButton/NavigatorButton';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Use Vite style env if applicable
 
@@ -414,9 +415,7 @@ const Dashboard = () => {
         />
       )}
 
-    <button className="floating-chat-btn" onClick={() => setIsChatOpen(true)}>
-        <FiMessageSquare style={{ height: '24px', width: '24px', strokeWidth: '3' }} />
-    </button>
+    <NavigatorButton></NavigatorButton>
     </>
   );
 };

@@ -6,7 +6,9 @@ const connectDB = require('../../server/src/config/db');
 
 const app = express();
 
-app.use(cors({ origin: 'https://smartspend-1.onrender.com', credentials: true }));
+// app.use(cors({ origin: 'https://smartspend-1.onrender.com', credentials: true }));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
 app.use(express.json());
 
 // Middleware to parse JSON
@@ -27,8 +29,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/spend', require('./routes/curlSpend'));
 app.use('/api/spendutils', require('./routes/spendUtils'));
 app.use('/api/chat', require('./routes/chatBot'));
-
-
+app.use('/api/MonthlySpend', require('./routes/MonthlySpend'));
+app.use('/api/WeeklySpend', require('./routes/WeeklySpend'));
 
 // Use environment variable for port, fallback to 5000
 const PORT = process.env.PORT || 5000;

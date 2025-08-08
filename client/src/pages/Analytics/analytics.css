@@ -1,0 +1,390 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+    --main-bg: #1A2233; 
+    --card-bg: #2C3A5F;
+    --primary-blue: #4A90E2;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A9B4D2;
+    --positive-green: #27AE60;
+    --progress-bg: #40517B;
+    --border-radius: 12px;
+    --light-blue: #6BADEB; 
+    --border-color: #3B4B70; 
+    --negative-red: #D0021B; 
+}
+
+/* Apply a base style to your app's body */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--main-bg);
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+    width: 100%; 
+    padding: 2rem; /* Consistent padding for the whole body */
+}
+
+.analytics-container {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0; /* Container padding handled by body padding */
+    box-sizing: border-box;
+}
+
+.analytics-header {
+    display: flex;
+    flex-direction: column; /* Stack header elements on mobile */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2.5rem; 
+    border-bottom: 1px solid var(--border-color); 
+    padding-bottom: 1.5rem; 
+}
+
+.analytics-title {
+    font-size: 2.8rem; 
+    font-weight: 700; 
+    margin: 0;
+    color: var(--text-primary);
+    text-align: center;
+    letter-spacing: -0.05rem; 
+    margin-bottom: 1rem; /* Space below title */
+}
+
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    justify-content: center;
+    width: 100%;
+}
+
+.filter-button {
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.filter-button.active {
+    background-color: var(--primary-blue);
+    color: var(--text-primary);
+    border-color: var(--primary-blue);
+}
+.filter-button:hover:not(.active) {
+    background-color: rgba(74, 144, 226, 0.1);
+    color: var(--primary-blue);
+}
+
+.filter-select {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23A9B4D2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.6-6.4H18.8c-5%200-9.3%201.8-12.9%205.5-3.8%203.7-5.6%208.5-5.6%2013.6v149.2c0%205.2%201.8%209.9%205.6%2013.6%203.6%203.7%207.9%205.5%2012.9%205.5h254.6c5%200%209.3-1.8%2012.9-5.5%203.8-3.7%205.6-8.5%205.6-13.6V83c0-5.1-1.8-9.8-5.6-13.6z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%, 0 0;
+    background-size: 0.65em auto, 100%;
+}
+.filter-select:focus {
+    border-color: var(--primary-blue);
+}
+
+.summary-section {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--primary-blue); /* Accent border */
+    background-color: rgba(74, 144, 226, 0.05); /* Very subtle background */
+    border-radius: 4px;
+}
+
+.summary-item h4 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.summary-item p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.summary-item p .currency {
+    font-size: 1.2rem;
+    color: var(--primary-blue);
+}
+.summary-item p .trend-icon {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+}
+.summary-item p .positive { color: var(--positive-green); }
+.summary-item p .negative { color: var(--negative-red); }
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
+    gap: 2rem; 
+    width: 100%;
+}
+
+.chart-card {
+    background-color: var(--card-bg);
+    padding: 2rem; 
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px; 
+    transition: transform 0.3s ease; 
+    border: 1px solid transparent; 
+}
+
+.chart-card:hover {
+    transform: translateY(-5px); 
+    border-color: var(--primary-blue); 
+}
+
+.chart-card h3 {
+    font-size: 1.8rem; 
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1.5rem; 
+    color: var(--text-primary);
+    text-align: center;
+    width: 100%;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--progress-bg); 
+}
+.chart-explanation {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+}
+.category-list-container {
+    width: 100%;
+    overflow-y: auto;
+    max-height: 250px; 
+    padding-right: 10px; 
+}
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+.category-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px dotted rgba(255,255,255,0.1);
+}
+.category-list li:last-child {
+    border-bottom: none;
+}
+.category-name {
+    font-weight: 500;
+    color: var(--primary-blue);
+    font-size: 1rem;
+}
+.category-amount {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+.no-data-message {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Recharts specific styling enhancements */
+.recharts-wrapper {
+    overflow: visible !important;
+}
+.recharts-surface {
+    overflow: visible !important;
+}
+.recharts-tooltip-wrapper {
+    background-color: rgba(44, 58, 95, 0.95) !important; 
+    border: 1px solid var(--light-blue) !important; 
+    border-radius: 10px; 
+    padding: 12px !important; 
+    font-size: 0.95rem; 
+    color: var(--text-primary) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+}
+.recharts-tooltip-label {
+    color: var(--light-blue) !important; 
+    font-weight: 700; 
+    margin-bottom: 8px; 
+    font-size: 1.05rem;
+}
+.recharts-tooltip-item {
+    color: var(--text-secondary) !important;
+    line-height: 1.4; 
+}
+.recharts-legend-item-text {
+    color: var(--text-secondary) !important;
+    font-size: 0.9rem; 
+}
+.recharts-cartesian-axis-tick-value {
+    fill: var(--text-secondary) !important;
+    font-size: 0.85rem; 
+}
+.recharts-label {
+    fill: var(--text-secondary) !important;
+    font-size: 0.9rem;
+}
+.recharts-cartesian-grid line {
+    stroke: var(--border-color) !important; 
+    stroke-dasharray: 4 4 !important; 
+}
+.recharts-y-axis .recharts-cartesian-axis-line {
+    stroke: var(--border-color) !important;
+}
+.recharts-x-axis .recharts-cartesian-axis-line {
+    stroke: var(--border-color) !important;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+    padding: 1rem;
+    }
+    .analytics-container {
+    padding: 0; /* Remove container padding as body has it */
+    }
+    .analytics-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    }
+    .analytics-title {
+    font-size: 2rem;
+    margin-top: 0.5rem;
+    }
+    .filter-controls {
+    flex-direction: column; /* Stack filter buttons vertically */
+    gap: 0.75rem;
+    }
+    .filter-button, .filter-select {
+    width: 100%; /* Make buttons/selects take full width */
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    }
+    .summary-section {
+        grid-template-columns: 1fr; 
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+    .summary-item p {
+        font-size: 1.5rem;
+    }
+    .summary-item p .currency {
+        font-size: 1rem;
+    }
+    .charts-grid {
+    grid-template-columns: 1fr; 
+    gap: 1.5rem; 
+    }
+    .chart-card {
+    padding: 1.5rem;
+    min-height: 300px; 
+    }
+    .chart-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    }
+    .chart-explanation {
+    font-size: 0.9rem;
+    padding: 0 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .analytics-title {
+    font-size: 1.6rem; /* Even smaller on very small screens */
+    }
+    .chart-card {
+    padding: 1rem;
+    }
+    .chart-card h3 {
+    font-size: 1.1rem;
+    }
+    .recharts-cartesian-axis-tick-value {
+    font-size: 0.7rem; 
+    }
+    .chart-explanation {
+    font-size: 0.8rem;
+    padding: 0 0.5rem;
+    }
+    .summary-item {
+        padding: 0.7rem;
+    }
+    .summary-item h4 {
+        font-size: 0.9rem;
+    }
+    .summary-item p {
+        font-size: 1.2rem;
+    }
+    .summary-item p .trend-icon {
+        font-size: 1.1rem;
+    }
+    .category-name {
+        font-size: 0.9rem;
+    }
+    .category-amount {
+        font-size: 1rem;
+    }
+}
