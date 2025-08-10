@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import './analytics.css';
+import * as monthlyData from '../../api/monthlySpend';
 
 // Reusable Icon component using inline SVG for a clean, library-free solution.
 const Icon = ({ path, className, style }) => (
@@ -32,6 +34,29 @@ const iconPaths = {
 
 
 const AnalyticsPage = () => {
+  // ---
+  const token = localStorage.getItem('token');
+
+  const[monthlydata, Setmonthlydata] = useState('');
+
+  useEffect(() => {
+  const fetchData = async () => {
+      try {
+        const res = await monthlyData.fetchMonthlyData(token);
+        
+        if (!res) {
+          console.log("Monthly data found Empty!!");
+        }
+        Setmonthlydata(res);
+      } catch (err) {
+        console.error("Error fetching monthly data:", err);
+      }
+    };
+
+    fetchData();
+  }, [monthlydata]);
+
+  // --- 
   // Mock spending data - you can replace this with actual data fetched from a backend
   const [allSpends] = useState([
     { id: 1, title: 'Groceries', category: 'Groceries', spend: 75.25, date: '2023-10-25' },
@@ -290,6 +315,9 @@ const AnalyticsPage = () => {
         </div>
 
         <div className="charts-grid">
+
+          {/* Every Month Spend Analysis  */}
+
           <div className="chart-card">
             <h3>Monthly Spending Trends</h3>
             <p className="chart-explanation">
@@ -309,6 +337,7 @@ const AnalyticsPage = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
+
 
           <div className="chart-card">
             <h3>Weekly Spending Patterns</h3>

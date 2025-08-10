@@ -145,4 +145,33 @@ router.post('/sync', auth, async (req, res) => {
   }
 });
 
+
+// @route   POST /api/MonthlySpend/fetchdata
+// @desc    used for fetch all data of the monthly spend of the user
+
+router.post('/fetchdata', auth, async (req, res) => {
+  try {
+    
+    const userId = req.user.user.id;
+
+    const user = await User.findOne({_id: userId});
+
+    if(!user){
+        return res.status(404).json({error: 'user not found while fetching budget'});
+    }
+
+    // --- se;ecting all from the month data ---
+    const monthlyData = await MonthlySpend.find({ user_id: userId })
+          .sort({ date: -1 }); 
+    
+        console.log(monthlyData);
+        res.status(200).json(monthlyData);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "month can not be fetched!!" });
+  }
+});
+
+
 module.exports = router;

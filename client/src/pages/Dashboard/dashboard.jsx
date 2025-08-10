@@ -4,7 +4,6 @@ import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus, F
 import { useState, useEffect } from 'react';
 import * as spendUtils from '../../api/spendUtils'; 
 import { useDashboardStore } from '../../store/dashboardStore';
-import ChatSection from '../chat_bot/chat_bot';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import NavigatorButton from '../../components/NavigatorButton/NavigatorButton';
