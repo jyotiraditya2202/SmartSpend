@@ -301,6 +301,8 @@ body {
 @media (max-width: 768px) {
     body {
     padding: 1rem;
+    display: flex;
+    align-items: center;
     }
     .analytics-container {
     padding: 0; /* Remove container padding as body has it */

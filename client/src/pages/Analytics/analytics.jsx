@@ -54,8 +54,9 @@ const AnalyticsPage = () => {
     };
 
     fetchData();
-  }, [monthlydata]);
+  }, []);
 
+  console.log(monthlydata);
   // --- 
   // Mock spending data - you can replace this with actual data fetched from a backend
   const [allSpends] = useState([
@@ -324,14 +325,21 @@ const AnalyticsPage = () => {
                 This bar chart shows your total spending for each month. Use it to identify months with higher or lower expenses and understand your long-term spending patterns.
             </p>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={monthlyChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <BarChart
+                data={
+                  monthlydata.length > 0
+                  ? monthlydata.map((item, index) => ({
+                      name: new Date(item.StartDate).toLocaleString('default', { month: 'short', year: 'numeric' }),
+                      TotalSpend: item.totalSpend
+                    }))
+                    : []
+                }
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke={COLORS[7]} />
                 <XAxis dataKey="name" stroke={COLORS[6]} tick={{ fill: 'var(--text-secondary)' }} />
                 <YAxis stroke={COLORS[6]} tick={{ fill: 'var(--text-secondary)' }} />
-                <Tooltip 
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} 
-                  content={<CustomTooltip />}
-                />
+                <Tooltip cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ paddingTop: '10px', color: 'var(--text-secondary)' }} />
                 <Bar dataKey="TotalSpend" fill={COLORS[0]} name="Total Spend ($)" barSize={30} radius={[5, 5, 0, 0]} />
               </BarChart>

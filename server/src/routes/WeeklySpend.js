@@ -147,4 +147,32 @@ router.post('/sync', auth, async (req, res) => {
   }
 });
 
+// @route   POST /api/WeeklySpend/fetchdata
+// @desc    used for fetch all data of the Weekly spend of the user
+
+router.post('/fetchdata', auth, async (req, res) => {
+    try {
+
+        const userId = req.user.user.id;
+
+        const user = await User.findOne({_id: userId});
+
+        if(!user){
+            return res.status(404).json({error: 'user not found while fetching budget'});
+        }
+
+        // --- selecting all from the month data ---
+        const weeklyData = await WeeklyRecord.find({ user_id: userId })
+            .sort({ StartDate: 1 }); 
+
+            console.log(weeklyData);
+            res.status(200).json(weeklyData);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: "month can not be fetched!!" });
+    }
+    });
+
+
 module.exports = router;

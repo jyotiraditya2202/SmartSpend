@@ -151,7 +151,7 @@ router.post('/sync', auth, async (req, res) => {
 
 router.post('/fetchdata', auth, async (req, res) => {
   try {
-    
+
     const userId = req.user.user.id;
 
     const user = await User.findOne({_id: userId});
@@ -160,10 +160,10 @@ router.post('/fetchdata', auth, async (req, res) => {
         return res.status(404).json({error: 'user not found while fetching budget'});
     }
 
-    // --- se;ecting all from the month data ---
+    // --- selecting all from the month data ---
     const monthlyData = await MonthlySpend.find({ user_id: userId })
-          .sort({ date: -1 }); 
-    
+        .sort({ StartDate: 1 }); 
+
         console.log(monthlyData);
         res.status(200).json(monthlyData);
 
