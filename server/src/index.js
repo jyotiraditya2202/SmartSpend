@@ -30,7 +30,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/spend', require('./routes/curlSpend'));
 app.use('/api/spendutils', require('./routes/spendUtils'));
 app.use('/api/chat', require('./routes/chatBot'));
-app.use('/api/MonthlySpend', require('./routes/MonthlySpend'));
+app.use('/api/MonthlySpend', require('./routes/MonthlySpend.cjs'));
 app.use('/api/WeeklySpend', require('./routes/WeeklySpend'));
 
 // Use environment variable for port, fallback to 5000

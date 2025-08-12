@@ -6,8 +6,12 @@ const User = require('../models/User');
 const SpendData = require('../models/SpendData');
 const DateUtils = require('../Utils/DateUtils');
 const auth = require('../middleware/auth');
+const axios = require('axios');
 
 require('dotenv').config();
+
+const BASE_URL = process.env.VITE_API_URL || 'http://localhost:5000';
+
 
 // @route   POST /api/MonthlySpend/insert
 // @desc    it willinsert the month record use it only if the month record does not exist
@@ -134,7 +138,22 @@ router.post('/sync', auth, async (req, res) => {
     );
 
     if(!updatedRecord){
-       return res.status(500).json({ msg: "month can not be found!!" });
+
+        try{
+           const MonthlyInsrt = await axios.post(`${BASE_URL}/api/MonthlySpend/insert` ,
+            {}, 
+            { headers: { Authorization: req.headers.authorization } });
+
+            const Sync = await axios.post(`${BASE_URL}/api/MonthlySpend/sync` ,
+            {}, 
+            { headers: { Authorization: req.headers.authorization } });
+            return res.status(200).json("Succefully inserted the month record");        
+
+        }   
+        catch(err){
+            console.log("Error ocured while inerting the monthly data:",err);
+            return res.status(400).json("Error ocured while inserting the month !!");
+        }
     }
 
     res.status(200).json({ msg: "month data updated succefully!!" });
