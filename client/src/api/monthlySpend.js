@@ -45,7 +45,7 @@ export const syncMonthlyData = async (token) => {
     return data;
 
   } catch (error) {
-    console.error("fetch monthly data error:", error);
+    console.error("syncing monthly data error:", error);
     return null;
   }
 }

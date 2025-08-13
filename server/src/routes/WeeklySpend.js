@@ -12,14 +12,15 @@ const spendCategories = [
   "Dining Out","Shopping","Health","Other"
 ];
 
-// @route   POST /api/WeeklySpend/insert
-// @desc    it will insert the Weekly record use it only if the week record does not exist
+// --- reusable insert functtion ---
 
-router.post('/insert', auth, async (req, res) => {
-  try {
-    const userId = req.user.user.id;
+async function insert(userId){
+    try{
     const user   = await User.findById(userId);
-    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (!user) {
+        return { success: false, error: 'User not found' };
+    }
 
     const today       = new Date();
     const StartOfWeek = DateUtils.getStartOfWeek(today);
@@ -27,124 +28,145 @@ router.post('/insert', auth, async (req, res) => {
 
     // Only insert if not exists
     const exists = await WeeklyRecord.exists({
-      user_id: userId,
-      StartDate: StartOfWeek
+    user_id: userId,
+    StartDate: StartOfWeek
     });
     if (exists) {
-      return res.status(200).json({ msg: 'Weekly record already exists' });
+        return { success: true, msg: 'Weekly record already exists' };
     }
 
-    const rec = new WeeklyRecord({
-      user_id:    userId,
-      StartDate:  StartOfWeek,
-      EndDate:    EndOfWeek,
-      budget:     user.budget
+    const rec = new WeeklyRecord
+    ({
+        user_id:    userId,
+        StartDate:  StartOfWeek,
+        EndDate:    EndOfWeek,
+        budget:     user.budget
     });
-    await rec.save();
-    res.status(201).json({ msg: 'Weekly record inserted successfully' });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to insert weekly record' });
-  }
-});
+    await rec.save();
+    return { success: true, msg: 'Weekly record inserted successfully' };
+    }
+    catch(err){
+        return { success: false, msg: err };
+    }
+    
+}
+
+// ---  reusable sync function ---
+async function sync(userId){
+    try{    
+        const user = await User.findOne({_id: userId});
+
+        if(!user){
+            return { success: false, msg: 'user not exist !!' };
+        }
+        const today = new Date();
+
+        const StartOfWeek = DateUtils.getStartOfWeek(today);
+        const EndOfWeek = DateUtils.getEndOfWeek(today);
+
+        const spendByCategory = await SpendData.aggregate([
+            {
+            $match: {
+                user_id: new mongoose.Types.ObjectId(userId),
+                date: {
+                $gte: StartOfWeek,
+                $lte: EndOfWeek
+                }
+            }
+            },
+            {
+            $group: {
+                _id: "$category",
+                total: { $sum: "$spend" }
+            }
+            }
+        ]);
+
+        // Initialize all categories with 0
+        const categoryTotals = {};
+        spendCategories.forEach(cat => {
+            categoryTotals[cat] = 0;
+        });
+
+        // Fill in actual totals
+        spendByCategory.forEach(item => {
+            if (item._id && categoryTotals.hasOwnProperty(item._id)) {
+            categoryTotals[item._id] = item.total;
+            }
+        });
+
+        const totalSpend = Object.values(categoryTotals).reduce((acc, val) => acc + val, 0);
+
+        const updateObject = {
+        budget: user.budget,
+        totalSpend: totalSpend,
+        };
+
+        spendCategories.forEach(category => {
+        updateObject[`categories.${category}`] = categoryTotals[category];
+        });
+
+        const updatedRecord = await WeeklyRecord.findOneAndUpdate(
+        {
+            user_id: userId,
+            StartDate: StartOfWeek
+        },
+        {
+            $set: updateObject
+        },
+        {
+            new: true
+        }
+        );
+
+        if(!updatedRecord){
+            const response = await insert(userId);
+
+            if (response.success) {
+
+            reUpdateRecord = await WeeklyRecord.findOneAndUpdate(
+                        { user_id: userId, StartDate: StartOfWeek },
+                        { $set: updateObject },
+                        { new: true }
+                    );
+
+            return { success: true, msg: 'Succefully inserted and synced the weekly record!!' };
+            
+            } else {
+
+            return { success: false, msg: 'Error while inserting and syncing the weekly record!!' };
+            }
+        
+        }
+        return { success: true, msg: 'Succefully synced the weekly record !!' };
+
+    }
+    catch(err){
+        return { success: false, msg: "Internal sync function error!!" };
+    }
+
+}
 
 // @route   POST /api/WeeklySpend/sync
 // @desc    it will update the Weekly record 
-
-
-
 router.post('/sync', auth, async (req, res) => {
-  try {
+    try {
 
-    const spendCategories = [
-      "Groceries",
-      "Entertainment",
-      "Utilities",
-      "Transportation",
-      "Dining Out",
-      "Shopping",
-      "Health",
-      "Other"
-    ];
+        const userId = req.user.user.id;
+        const response = await sync(userId);
 
-    const userId = req.user.user.id;
-
-    const user = await User.findOne({_id: userId});
-
-    if(!user){
-        return res.status(404).json({error: 'user not found while fetching budget'});
-    }
-    const today = new Date();
-
-    const StartOfWeek = DateUtils.getStartOfWeek(today);
-    const EndOfWeek = DateUtils.getEndOfWeek(today);
-
-    const spendByCategory = await SpendData.aggregate([
-        {
-        $match: {
-            user_id: new mongoose.Types.ObjectId(userId),
-            date: {
-            $gte: StartOfWeek,
-            $lte: EndOfWeek
-            }
+        if(response.success){
+            return res.status(200).json({ msg: response.msg });
         }
-        },
-        {
-        $group: {
-            _id: "$category",
-            total: { $sum: "$spend" }
+        else{
+            return res.status(500).json({ msg: response.msg });
         }
-        }
-    ]);
-
-    // Initialize all categories with 0
-    const categoryTotals = {};
-    spendCategories.forEach(cat => {
-        categoryTotals[cat] = 0;
-    });
-
-    // Fill in actual totals
-    spendByCategory.forEach(item => {
-        if (item._id && categoryTotals.hasOwnProperty(item._id)) {
-        categoryTotals[item._id] = item.total;
-        }
-    });
-
-    const totalSpend = Object.values(categoryTotals).reduce((acc, val) => acc + val, 0);
-
-    const updateObject = {
-    budget: user.budget,
-    totalSpend: totalSpend,
-    };
-
-    spendCategories.forEach(category => {
-    updateObject[`categories.${category}`] = categoryTotals[category];
-    });
-
-    const updatedRecord = await WeeklyRecord.findOneAndUpdate(
-    {
-        user_id: userId,
-        StartDate: StartOfWeek
-    },
-    {
-        $set: updateObject
-    },
-    {
-        new: true
-    }
-    );
-
-    if(!updatedRecord){
-       return res.status(500).json({ msg: "week can not be found!!" });
-    }
-
-    res.status(200).json({ msg: "week data updated succefully!!" });
-
-  } catch (err) {
+    
+    } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: "week can not be updated!!" });
-  }
+    return res.status(500).json({ msg: "week can not be updated!!" });
+    }
 });
 
 // @route   POST /api/WeeklySpend/fetchdata

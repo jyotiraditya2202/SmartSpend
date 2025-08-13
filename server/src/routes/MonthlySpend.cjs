@@ -12,51 +12,53 @@ require('dotenv').config();
 
 const BASE_URL = process.env.VITE_API_URL || 'http://localhost:5000';
 
+// --- insert function for reusabilty ---
+async function insert(userId) {
 
-// @route   POST /api/MonthlySpend/insert
-// @desc    it willinsert the month record use it only if the month record does not exist
+  const user = await User.findOne({ _id: userId });
 
-router.post('/insert', auth, async (req, res) => {
+  if (!user) {
+    throw new Error('User not found while fetching budget');
+  }
+
+  const budget = user.budget;
+
+  const today = new Date();
+
+  const StartOfMonth = DateUtils.getStartOfMonth(today);
+  const EndOfMonth = DateUtils.getEndOfMonth(today);
+
+  const existingRecord = await MonthlySpend.findOne({
+    user_id: userId,
+    StartDate: StartOfMonth
+  });
+
+  if (existingRecord) {
+    throw new Error('Month entry already exists');
+  }
+
   try {
 
-    const userId = req.user.user.id;
-
-    const user = await User.findOne({_id: userId});
-
-    if(!user){
-        return res.status(404).json({error: 'user not found while fetching budget'});
-    }
-
-    const budget = user.budget;
-
-    const today = new Date();
-
-    const StartOfMonth = DateUtils.getStartOfMonth(today);
-    const EndOfMonth = DateUtils.getEndOfMonth(today);
-
-    const newMonthlySpend = new MonthlySpend(
-        {
-            user_id: userId,
-            StartDate: StartOfMonth,
-            EndDate: EndOfMonth,
-            budget: budget, 
-        }
-    )
-    
-    await newMonthlySpend.save();
-
-    res.status(200).json({ msg: "month inserted succefully!!" });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "month can not be inserted!!" });
+  const newMonthlySpend = new MonthlySpend(
+      {
+          user_id: userId,
+          StartDate: StartOfMonth,
+          EndDate: EndOfMonth,
+          budget: budget, 
+      }
+  )
+  
+  await newMonthlySpend.save(); 
+  const msg = "Succesfully created the month entry!!";
+  return msg;
   }
-});
+  catch(error){
+    return error;
+  }
+}
 
-// @route   POST /api/MonthlySpend/sync
-// @desc    used for sync the new data in the record
-
-router.post('/sync', auth, async (req, res) => {
+// --- sync function for re-usabilty ---
+async function sync(userId) {
   try {
 
     const spendCategories = [
@@ -70,13 +72,12 @@ router.post('/sync', auth, async (req, res) => {
       "Other"
     ];
 
-    const userId = req.user.user.id;
-
     const user = await User.findOne({_id: userId});
 
     if(!user){
-        return res.status(404).json({error: 'user not found while fetching budget'});
+        return 'user not found while fetching budget';
     }
+
     const today = new Date();
 
     const StartOfMonth = DateUtils.getStartOfMonth(today);
@@ -100,7 +101,6 @@ router.post('/sync', auth, async (req, res) => {
         }
     ]);
 
-    // Initialize all categories with 0
     const categoryTotals = {};
     spendCategories.forEach(cat => {
         categoryTotals[cat] = 0;
@@ -138,29 +138,45 @@ router.post('/sync', auth, async (req, res) => {
     );
 
     if(!updatedRecord){
+      try {
+        await insert(userId); 
 
-        try{
-           const MonthlyInsrt = await axios.post(`${BASE_URL}/api/MonthlySpend/insert` ,
-            {}, 
-            { headers: { Authorization: req.headers.authorization } });
+        updatedRecord = await MonthlySpend.findOneAndUpdate(
+          { user_id: userId, StartDate: StartOfMonth },
+          { $set: updateObject },
+          { new: true }
+        );
 
-            const Sync = await axios.post(`${BASE_URL}/api/MonthlySpend/sync` ,
-            {}, 
-            { headers: { Authorization: req.headers.authorization } });
-            return res.status(200).json("Succefully inserted the month record");        
-
-        }   
-        catch(err){
-            console.log("Error ocured while inerting the monthly data:",err);
-            return res.status(400).json("Error ocured while inserting the month !!");
-        }
+        return "succefully synced the data";
+      }
+      catch(err){
+        return err;
+      }
+      
     }
+    return "succefully synced the data";
 
-    res.status(200).json({ msg: "month data updated succefully!!" });
+  }
+  catch(err){
+    return "Internal Server Error";
+  }
+  
+}
 
-  } catch (err) {
+// @route   POST /api/MonthlySpend/sync
+// @desc    used for sync the new data in the record
+
+router.post('/sync', auth, async (req, res) => {
+  try {
+
+    const userId = req.user.user.id;
+    
+    const result = await sync(userId);
+    return res.status(200).json({ message: result });
+  }
+  catch(err){
     console.error(err);
-    res.status(500).json({ msg: "month can not be updated!!" });
+    return res.status(500).json("Internal Server Error !!");
   }
 });
 

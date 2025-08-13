@@ -112,6 +112,4 @@ export const getAllSpends = async () => {
     console.error('Error fetching all spends:', err);
     return null;
   }
-
-
 };

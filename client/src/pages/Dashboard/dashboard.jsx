@@ -3,6 +3,8 @@ import './dashboard.css';
 import { FiTarget, FiDollarSign, FiBarChart2, FiTrendingUp, FiArrowUp, FiPlus, FiArrowDown, FiTrash2, FiList, FiX, FiMessageSquare } from 'react-icons/fi';
 import { useState, useEffect } from 'react';
 import * as spendUtils from '../../api/spendUtils'; 
+import * as monthlySpend from '../../api/monthlySpend'; 
+import * as weeklySpend from '../../api/weeklySpend';
 import { useDashboardStore } from '../../store/dashboardStore';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -190,7 +192,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchSpends();
-  }, []);
+  }, [fetchSpends]);
 
   const [allSpends, setAllSpends] = useState([]);
 
@@ -201,7 +203,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchAllSpends();
-  }, []);
+  }, [fetchAllSpends]);
 
 
   const handleModalSubmit = async (newRecord) => {
@@ -212,6 +214,25 @@ const Dashboard = () => {
         // Optionally refetch the updated data via initialize()
         initialize();
         await fetchSpends(); 
+        const token = localStorage.getItem('token');
+        
+        try{
+          const res = monthlySpend.syncMonthlyData(token);
+        }
+        catch(err){
+          alert('Failed sync monthly data !!');
+        }
+        try{
+          const res = weeklySpend.syncWeeklyData(token);
+        }
+        catch(err){
+          alert('Failed sync weekly data !!');
+        }
+        
+        
+        
+        console.log("synced data succefully !!");
+
     } catch (error) {
         console.error('Error inserting record:', error);
         alert('Failed to insert spend record. Please try again.');
