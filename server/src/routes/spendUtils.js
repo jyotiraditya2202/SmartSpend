@@ -67,7 +67,7 @@ router.post('/getammount', auth, async (req, res) => {
       {
         $group: {
           _id: null,
-          total: { $sum: "$spend" }
+          total: { $sum: "$amount" }
         }
       }
     ]);
@@ -100,7 +100,7 @@ router.post('/recentSpend', auth, async (req, res) => {
     const recentSpends = await SpendData.find({ user_id: userId })
       .sort({ date: -1 }) // assuming you have timestamps
       .limit(5)
-      .select('title category spend date');
+      .select('title category amount date');
 
     console.log(recentSpends);
     res.status(200).json(recentSpends);
@@ -126,7 +126,7 @@ router.post('/allSpend', auth, async (req, res) => {
     // Get last 5 spends by this user, sorted by latest
     const recentSpends = await SpendData.find({ user_id: userId })
       .sort({ date: -1 }) // assuming you have timestamps
-      .select('title category spend date');
+      .select('title category amount date');
 
     console.log(recentSpends);
     res.status(200).json(recentSpends);

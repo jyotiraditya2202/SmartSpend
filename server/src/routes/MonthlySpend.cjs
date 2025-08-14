@@ -96,7 +96,7 @@ async function sync(userId) {
         {
         $group: {
             _id: "$category",
-            total: { $sum: "$spend" }
+            total: { $sum: "$amount" }
         }
         }
     ]);

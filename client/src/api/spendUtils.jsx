@@ -85,6 +85,8 @@ export const getRecentSpends = async () => {
       }
     );
 
+    console.log("----------");
+    console.log(res.data);
     return res.data;
   } catch (err) {
     console.error('Error fetching recent spends:', err);

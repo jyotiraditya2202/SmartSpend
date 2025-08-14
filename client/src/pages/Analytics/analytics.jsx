@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './analytics.css';
 import * as monthlyData from '../../api/monthlySpend';
+import * as weeklyData from '../../api/weeklySpend';
 
 // Reusable Icon component using inline SVG for a clean, library-free solution.
 const Icon = ({ path, className, style }) => (
@@ -38,22 +39,37 @@ const AnalyticsPage = () => {
   const token = localStorage.getItem('token');
 
   const[monthlydata, Setmonthlydata] = useState('');
+  const[weeklydata, Setweeklydata] = useState('');
 
   useEffect(() => {
-  const fetchData = async () => {
-      try {
-        const res = await monthlyData.fetchMonthlyData(token);
-        
-        if (!res) {
-          console.log("Monthly data found Empty!!");
+    const fetchMonthlyData = async () => {
+        try {
+          const res = await monthlyData.fetchMonthlyData(token);
+          
+          if (!res) {
+            console.log("Monthly data found Empty!!");
+          }
+          Setmonthlydata(res);
+        } catch (err) {
+          console.error("Error fetching monthly data:", err);
         }
-        Setmonthlydata(res);
-      } catch (err) {
-        console.error("Error fetching monthly data:", err);
-      }
-    };
+      };
+    
+    const fetchWeeklyData = async () => {
+        try{
+            const res = await weeklyData.fetchWeeklyData(token);
+            if(!res){
+                console.log("Weekly Data found Empty!!");
+            }
+            Setweeklydata(res);
+        }
+        catch(err){
+          console.log("Error fetching Weekly Data")
+        }
 
-    fetchData();
+    } 
+    fetchMonthlyData();
+    fetchWeeklyData();
   }, []);
 
   console.log(monthlydata);
@@ -247,48 +263,7 @@ const AnalyticsPage = () => {
       <div className="analytics-container">
         <div className="analytics-header">
             <h2 className="analytics-title">SmartSpend Analytics</h2>
-            <div className="filter-controls">
-                <button 
-                    className={`filter-button ${currentPeriodType === 'overall' ? 'active' : ''}`}
-                    onClick={() => setCurrentPeriodType('overall')}
-                >
-                    Overall Analytics
-                </button>
-                <button 
-                    className={`filter-button ${currentPeriodType === 'monthly' ? 'active' : ''}`}
-                    onClick={() => setCurrentPeriodType('monthly')}
-                >
-                    Monthly Analytics
-                </button>
-                {currentPeriodType === 'monthly' && (
-                    <select 
-                        className="filter-select"
-                        value={selectedMonth} 
-                        onChange={(e) => setSelectedMonth(e.target.value)}
-                    >
-                        {uniqueMonths.map(month => (
-                            <option key={month} value={month}>{month}</option>
-                        ))}
-                    </select>
-                )}
-                <button 
-                    className={`filter-button ${currentPeriodType === 'weekly' ? 'active' : ''}`}
-                    onClick={() => setCurrentPeriodType('weekly')}
-                >
-                    Weekly Analytics
-                </button>
-                {currentPeriodType === 'weekly' && (
-                    <select 
-                        className="filter-select"
-                        value={selectedWeek} 
-                        onChange={(e) => setSelectedWeek(e.target.value)}
-                    >
-                        {uniqueWeeks.map(week => (
-                            <option key={week} value={week}>{week}</option>
-                        ))}
-                    </select>
-                )}
-            </div>
+            
         </div>
 
         {/* Dynamic Summary Section */}
@@ -341,7 +316,7 @@ const AnalyticsPage = () => {
                 <YAxis stroke={COLORS[6]} tick={{ fill: 'var(--text-secondary)' }} />
                 <Tooltip cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ paddingTop: '10px', color: 'var(--text-secondary)' }} />
-                <Bar dataKey="TotalSpend" fill={COLORS[0]} name="Total Spend ($)" barSize={30} radius={[5, 5, 0, 0]} />
+                <Bar dataKey="TotalSpend" fill={COLORS[0]} name="monthly spend ($)" barSize={30} radius={[5, 5, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -353,7 +328,14 @@ const AnalyticsPage = () => {
                 The line chart below illustrates your spending week by week. This can help you pinpoint specific weeks where spending deviated from your average.
             </p>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={weeklyChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <LineChart data={
+                weeklydata.length > 0 ? 
+                weeklydata.map((item,index) => ({
+                  name: new Date(item.StartDate).toLocaleString('default', { day: 'numeric', month: 'short', year: 'numeric'}),
+                  TotalSpend: item.totalSpend
+                }))
+                :[]
+                } margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={COLORS[7]} />
                 <XAxis dataKey="name" stroke={COLORS[6]} tick={{ fill: 'var(--text-secondary)' }} />
                 <YAxis stroke={COLORS[6]} tick={{ fill: 'var(--text-secondary)' }} />
@@ -361,7 +343,7 @@ const AnalyticsPage = () => {
                   content={<CustomTooltip />}
                 />
                 <Legend wrapperStyle={{ paddingTop: '10px', color: 'var(--text-secondary)' }} />
-                <Line type="monotone" dataKey="TotalSpend" stroke={COLORS[1]} activeDot={{ r: 8 }} name="Total Spend ($)" strokeWidth={2} />
+                <Line type="monotone" dataKey="TotalSpend" stroke={COLORS[1]} activeDot={{ r: 8 }} name="weekly spend ($)" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </div>

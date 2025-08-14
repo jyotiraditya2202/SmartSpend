@@ -26,29 +26,30 @@ const spendCategories = [
 ];
 
 // Modal component for adding new spend records
-const AddSpendModal = ({ onClose, onSubmit }) => {
+const AddSpendModal = ({ onClose, onSubmit, initialType }) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState(spendCategories[0]);
-  const [spend, setSpend] = useState('');
+  const [amount, setAmount] = useState('');
+  const [type, setType] = useState(initialType || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSpentSubmit = (e) => {
+
     e.preventDefault();
-    if (!title || !category || !spend) {
+    if (!title || !category || !amount) {
       setError("Please fill out all fields.");
       return;
     }
+    console.log("amount:",amount);
     setIsSubmitting(true);
     setError(null);
 
-    // Simulating API call
-    setTimeout(() => {
-      console.log('Submitting new spend record:', { title, category, spend: parseFloat(spend) });
-      onSubmit({ title, category, spend: parseFloat(spend) });
-      setIsSubmitting(false);
-      onClose(); // Close the modal after submission
-    }, 1000);
+    console.log('Submitting new spend record:', { title, category, type ,amount: parseFloat(amount) });
+    onSubmit({ title, category, type, amount: parseFloat(amount) });
+    setIsSubmitting(false);
+    onClose(); 
+
   };
 
   return (
@@ -58,7 +59,7 @@ const AddSpendModal = ({ onClose, onSubmit }) => {
           <FiX />
         </button>
         <h2 className="modal-title">Add New Spend</h2>
-        <form className="add-spend-form" onSubmit={handleSubmit}>
+        <form className="add-spend-form" onSubmit={handleSpentSubmit}>
           {error && <p className="form-error">{error}</p>}
           <div className="form-group">
             <label htmlFor="title">Title</label>
@@ -83,13 +84,14 @@ const AddSpendModal = ({ onClose, onSubmit }) => {
               ))}
             </select>
           </div>
+
           <div className="form-group">
             <label htmlFor="spend">Amount ($)</label>
             <input
-              id="spend"
+              id="amount"
               type="number"
-              value={spend}
-              onChange={(e) => setSpend(e.target.value)}
+              value={amount}
+              onChange={(e) => { setAmount(e.target.value) }}
               placeholder="e.g., 5.50"
               step="0.01"
               required
@@ -114,17 +116,17 @@ const AllRecordsModal = ({ spends, onClose, onDelete }) => {
         <h2 className="records-modal-title">All Spend Records</h2>
         <div className="records-list">
           {spends.length > 0 ? (
-            spends.map((spend) => (
-              <div key={spend._id} className="records-list-item">
+            spends.map((amount) => (
+              <div key={amount._id} className="records-list-item">
                 <div className="records-item-details">
                   <div className="records-item-title-cat">
-                    <h4>{spend.title}</h4>
-                    <p className="records-item-category">{spend.category}</p>
+                    <h4>{amount.title}</h4>
+                    <p className="records-item-category">{amount.category}</p>
                   </div>
 
                   <span className="records-item-date">
                     {
-                    new Date(spend.date).toLocaleDateString('en-US', {
+                    new Date(amount.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric'
@@ -133,8 +135,8 @@ const AllRecordsModal = ({ spends, onClose, onDelete }) => {
 
                 </div>
                 <div className="records-item-actions">
-                  <span className="records-item-amount">${spend.spend.toFixed(2)}</span>
-                  <button key={spend._id} className="delete-btn" onClick={() => onDelete(spend._id)}>
+                  <span className="records-item-amount">${Number(amount.amount).toFixed(2)}</span>
+                  <button key={amount._id} className="delete-btn" onClick={() => onDelete(amount._id)}>
                     <FiTrash2 style={{ height: '20px', width: '20px' }} />
                   </button>
                 </div>
@@ -153,7 +155,7 @@ const Dashboard = () => {
 
     const navigate = useNavigate();
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState('');
     const [isRecordsModalOpen, setIsRecordsModalOpen] = useState(false);
     const {
     budget,
@@ -180,7 +182,10 @@ const Dashboard = () => {
   }, [initialize]);
 
   const handleAddSpend = () => {
-    setIsModalOpen(true);
+    setIsModalOpen('spent');
+  };
+  const handleAddIncome = () => {
+    setIsModalOpen('income');
   };
 
   const [recentSpends, setRecentSpends] = useState([]);
@@ -192,18 +197,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchSpends();
-  }, [fetchSpends]);
+  }, []);
 
   const [allSpends, setAllSpends] = useState([]);
 
-  const fetchAllSpends = async () => {
-      const data = await spendUtils.getAllSpends();
-      if (data) setAllSpends(data);
-  };
-
   useEffect(() => {
+    if (!isRecordsModalOpen) return;
+    
+    const fetchAllSpends = async () => {
+        const data = await spendUtils.getAllSpends();
+        console.log("all spend data");
+        console.log(data);
+        if (data) setAllSpends(data);
+    };
+
     fetchAllSpends();
-  }, [fetchAllSpends]);
+  }, [isRecordsModalOpen]);
 
 
   const handleModalSubmit = async (newRecord) => {
@@ -227,10 +236,7 @@ const Dashboard = () => {
         }
         catch(err){
           alert('Failed sync weekly data !!');
-        }
-        
-        
-        
+        } 
         console.log("synced data succefully !!");
 
     } catch (error) {
@@ -296,11 +302,6 @@ const Dashboard = () => {
         <p>Your intelligent spending companion</p>
         <div className='bt-postion'>
 
-        {/* add spend button */}
-        <button className="add-spend-btn" onClick={handleAddSpend}>
-            <FiPlus className="add-spend-icon" style={{ height: '20px', width: '20px', strokeWidth: '3' }} />
-            Add Spend
-        </button>
 
         {/* view all record */}
         <button className="add-spend-btn" onClick={() => setIsRecordsModalOpen(true)}>
@@ -319,7 +320,11 @@ const Dashboard = () => {
           <div> {/* Top content wrapper */}
             <div className="card-header">
               <h3>Monthly Budget</h3>
-              <FiTarget className="card-icon" />
+
+              <button className="dash-btn" onClick={handleAddIncome}>
+                <FiPlus className="card-icon" />
+              </button>
+
             </div>
             <h2 className="card-value">${budget}</h2>
           </div>
@@ -338,7 +343,9 @@ const Dashboard = () => {
           <div>
             <div className="card-header">
               <h3>Spent This Month</h3>
-              <FiDollarSign className="card-icon" />
+              <button className="dash-btn" onClick={handleAddSpend}>
+                <FiPlus className="card-icon" />
+              </button>
             </div>
             <h2 className="card-value">${spendData.thisMonthSpend}</h2>
           </div>
@@ -387,25 +394,26 @@ const Dashboard = () => {
         <div className="recent-spends-container">
             <h2>Recent Spends</h2>
             <ul className="recent-spends-list">
-                {recentSpends.map((spend) => (
-                    <li key={spend._id} className="spend-item">
+                {recentSpends.map((amount) => (
+                    <li key={amount._id} className="spend-item">
                         <div className="spend-details">
-                            <h4>{spend.title}</h4>
-                            <p>{spend.category}</p>
+                            <h4>{amount.title}</h4>
+                            <p>{amount.category}</p>
                         
                             <p>
                             {
-                            new Date(spend.date).toLocaleDateString('en-US', {
+                            new Date(amount.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric'
-                            })}
+                            })
+                          }
                             </p>
 
                         </div>
                         <div className="spend-right-section">
-                            <span className="spend-amount">${spend.spend.toFixed(2)}</span>
-                            <button key={spend._id} className="delete-btn" onClick={() => handleDeleteRecentSpend(spend._id)}>
+                            <span className="spend-amount">${Number(amount.amount).toFixed(2)}</span>
+                            <button key={amount._id} className="delete-btn" onClick={() => handleDeleteRecentSpend(amount._id)}>
                                 <FiTrash2 style={{ height: '20px', width: '20px' }} />
                             </button>
                         </div>
@@ -422,10 +430,12 @@ const Dashboard = () => {
     </div>
     {isModalOpen && (
         <AddSpendModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsModalOpen('')}
           onSubmit={handleModalSubmit}
+          initialType={isModalOpen}
         />
-      )}
+      )
+      }
 
     {isRecordsModalOpen && (
         <AllRecordsModal
@@ -433,6 +443,7 @@ const Dashboard = () => {
           onClose={() => setIsRecordsModalOpen(false)}
           onDelete={handleDeleteAllSpend}
         />
+        
       )}
 
     <NavigatorButton></NavigatorButton>

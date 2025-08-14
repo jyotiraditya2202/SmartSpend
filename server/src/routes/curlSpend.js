@@ -17,13 +17,14 @@ router.post('/insert',auth, async (req, res) => {
 
     const user_id = req.user.user.id;
     console.log(user_id);
-    const { title, category, spend } = req.body;
+    const { title, category, type ,amount } = req.body;
 
     const newSpend = new SpendData({
       user_id,
       title,
       category,
-      spend,
+      amount,
+      type
     });
 
     await newSpend.save();

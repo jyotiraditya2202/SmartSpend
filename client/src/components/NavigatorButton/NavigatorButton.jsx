@@ -1,7 +1,7 @@
 import './NavigatorButton.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiMessageSquare, FiX, FiArrowUpCircle, FiPieChart } from 'react-icons/fi'; 
+import { FiMessageSquare, FiX, FiArrowUpCircle, FiPieChart, FiPlus } from 'react-icons/fi'; 
 
 
 function NavigatorButton(){
@@ -64,6 +64,13 @@ function NavigatorButton(){
             onClick={() => { setCurrentView('chat'); setIsFloatingMenuOpen(false); }}
         >
             <FiMessageSquare style={{ height: '24px', width: '24px', strokeWidth: '3' }}/>
+        </button>
+
+        <button
+            className={`fab-child-button ${isFloatingMenuOpen ? '' : 'hidden'}`}
+            onClick={() => { setCurrentView('chat'); setIsFloatingMenuOpen(false); }}
+        >
+            <FiPlus style={{ height: '24px', width: '24px', strokeWidth: '3' }}/>
         </button>
 
         <button className="fab-button" onClick={() => setIsFloatingMenuOpen(!isFloatingMenuOpen)}>
