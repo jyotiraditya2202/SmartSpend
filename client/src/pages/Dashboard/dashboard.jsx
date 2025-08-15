@@ -25,15 +25,32 @@ const spendCategories = [
   "Other"
 ];
 
+const incomeCategories = [
+  "Salary",
+  "Freelance ",
+  "Business Revenue",
+  "Investments ",
+  "Rental Income",
+  "Gifts / Grants",
+  "Refunds / Reimbursements",
+  "Other Income"
+];
+
 // Modal component for adding new spend records
 const AddSpendModal = ({ onClose, onSubmit, initialType }) => {
+
+
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState(spendCategories[0]);
-  const [amount, setAmount] = useState('');
   const [type, setType] = useState(initialType || '');
+  
+  const categories = type === "income" ? incomeCategories : spendCategories;
+
+  const [category, setCategory] = useState('');
+  const [amount, setAmount] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-
+  
   const handleSpentSubmit = (e) => {
 
     e.preventDefault();
@@ -79,7 +96,7 @@ const AddSpendModal = ({ onClose, onSubmit, initialType }) => {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              {spendCategories.map((cat, index) => (
+              {categories.map((cat, index) => (
                 <option key={index} value={cat}>{cat}</option>
               ))}
             </select>
@@ -203,7 +220,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!isRecordsModalOpen) return;
-    
+
     const fetchAllSpends = async () => {
         const data = await spendUtils.getAllSpends();
         console.log("all spend data");
