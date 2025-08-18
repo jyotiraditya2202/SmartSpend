@@ -99,7 +99,7 @@ body::-webkit-scrollbar {
 }
 
 /* --- Modal Styling --- */
-.modal-backdrop {
+/* .modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -208,7 +208,7 @@ body::-webkit-scrollbar {
     color: red;
     text-align: center;
     margin-bottom: 1rem;
-}
+} */
 
 /* --- General Card Styling --- */
 .card {

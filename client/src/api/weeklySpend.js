@@ -4,8 +4,14 @@ import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // -- fetch weekly data ---
-export const fetchWeeklyData = async (token) => {
+export const fetchWeeklyData = async () => {
   try {
+    const token = localStorage.getItem('token');
+
+    if(!token){
+        console.log("token not found !!");
+    }
+
     const response = await fetch(`${BASE_URL}/api/WeeklySpend/fetchdata`, {
       method: 'POST', 
       headers: {
@@ -28,8 +34,14 @@ export const fetchWeeklyData = async (token) => {
 }
 
 // --- sync api ---
-export const syncWeeklyData = async (token) => {
+export const syncWeeklyData = async () => {
   try {
+    const token = localStorage.getItem('token');
+
+    if(!token){
+        console.log("token not found !!");
+    }
+    
     const response = await fetch(`${BASE_URL}/api/WeeklySpend/sync`, {
       method: 'POST', 
       headers: {

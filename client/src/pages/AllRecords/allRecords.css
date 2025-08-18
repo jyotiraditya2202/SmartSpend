@@ -1,0 +1,78 @@
+.modal-backdrop, .records-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content, .records-modal-content {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.navigation-menu{
+    display: flex; 
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;  
+}
+
+.navigation-menu p{
+    color: var(--text-secondary);
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 1px solid var(--text-secondary);
+    padding: 1rem 0;
+    transition: 1ms;
+}
+
+.navigation-menu p.active{
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+    transition: 1ms;
+}
+
+.records-modal-content {
+    max-width: 800px;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-close-btn, .records-modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.modal-close-btn:hover, .records-modal-close-btn:hover {
+    color: var(--text-primary);
+}
+
+.modal-title, .records-modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}

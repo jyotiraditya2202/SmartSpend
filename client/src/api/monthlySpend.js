@@ -3,8 +3,14 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-export const fetchMonthlyData = async (token) => {
-  try {
+export const fetchMonthlyData = async () => {
+  try { 
+    const token = localStorage.getItem('token');
+
+    if(!token){
+        console.log("token not found !!");
+    }
+
     const response = await fetch(`${BASE_URL}/api/MonthlySpend/fetchdata`, {
       method: 'POST', 
       headers: {
@@ -27,8 +33,13 @@ export const fetchMonthlyData = async (token) => {
 }
 
 // --- sync api ---
-export const syncMonthlyData = async (token) => {
+export const syncMonthlyData = async () => {
   try {
+    const token = localStorage.getItem('token');
+
+    if(!token){
+        console.log("token not found !!");
+    }
     const response = await fetch(`${BASE_URL}/api/MonthlySpend/sync`, {
       method: 'POST', 
       headers: {
