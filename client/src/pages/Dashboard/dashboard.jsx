@@ -119,7 +119,7 @@ const Dashboard = () => {
         {/* view all record */}
         <button className="add-spend-btn" onClick={() => setIsRecordsModalOpen(true)}>
             <FiList style={{ height: '20px', width: '20px', strokeWidth: '3' }} />
-            View All Spendings
+            View All Transaction
         </button>
 
         </div>
@@ -162,28 +162,30 @@ const Dashboard = () => {
             </div>
             <h2 className="card-value">${spendData.thisMonthSpend}</h2>
           </div>
-          <p className="card-info">${monthRemaining} remaining</p>
+
+          <p
+            className="card-info savings-increase"
+            style={{ color: comparePercentage < 0 ? 'red' : 'var(--positive-green)' }}
+          >
+
+            {comparePercentage < 0 ? <FiArrowDown /> : <FiArrowUp />}{" "}
+            {Math.abs(comparePercentage)}% from last month
+          
+          </p>
+          
         </div>
 
         {/* Card 3: Savings */}
         <div className="card">
           <div>
             <div className="card-header">
-              <h3>Savings</h3>
+              <h3>Upcoming Spends</h3>
               <FiBarChart2 className="card-icon" />
             </div>
-            <h2 className="card-value">${monthRemaining}</h2>
+            
+            <h2 className="card-value">${spendData.upcomingSpend}</h2>
+            {console.log(spendData.upcomingSpend)}
           </div>
-        <p
-        className="card-info savings-increase"
-        style={{ color: comparePercentage < 0 ? 'red' : 'var(--positive-green)' }}
-        >
-
-        {comparePercentage < 0 ? <FiArrowDown /> : <FiArrowUp />}{" "}
-        {Math.abs(comparePercentage)}% from last month
-        
-        </p>
-
         </div>
 
         {/* Card 4: Efficiency Score */}

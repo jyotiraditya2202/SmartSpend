@@ -52,20 +52,22 @@ function AddIncomeModal ({ isModalOpen, setIsModelOpen }){
             
             const response = await incomeUtils.insertIncome(data);
             console.log('Record inserted successfully:', response);
-    
-            // try{
-            //     await monthlySpend.syncMonthlyData();
-            // }
-            // catch(err){
-            //     alert('Failed sync monthly data !!');
-            // }
-            // try{
-            //     await weeklySpend.syncWeeklyData();
-            // }
-            // catch(err){
-            //     alert('Failed sync weekly data !!');
-            // } 
-            // console.log("synced data succefully !!");
+            
+            try{
+                await monthlySpend.syncMonthlyData();
+            }
+            catch(err){
+                alert('Failed sync monthly data !!');
+            }
+            try{
+                await weeklySpend.syncWeeklyData();
+            }
+            catch(err){
+                alert('Failed sync weekly data !!');
+            } 
+            console.log("synced data succefully !!");
+            
+            initialize();
             
             setIsSubmitting(false);
             setIsModelOpen(false);

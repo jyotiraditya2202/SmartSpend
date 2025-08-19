@@ -7,6 +7,7 @@ import './allRecords.css';
 
 // store imports 
 import { allSpendRecordStore } from "../../store/allSpendReordStore";
+import { allIncomeRecordStore } from "../../store/allIncomeRecordStore";
 import { useDashboardStore } from '../../store/dashboardStore';
 
 // api imports
@@ -24,6 +25,7 @@ const [active, setActive] = useState("spent");
 // --- initiallizing store vars  ---
 
 const { allSpendRecord, fetchAllSpendRecord } = allSpendRecordStore();
+const { allIncomeRecord, fetchAllIncomeRecord } = allIncomeRecordStore();
 
 useEffect(() => {
   if (isOpenAllSpendRecord) {
@@ -34,9 +36,9 @@ useEffect(() => {
         console.log(allSpendRecord);
     }
     if(active == "income"){
-        fetchAllSpendRecord();
+        fetchAllIncomeRecord();
         console.log("income data fetched !!");
-        console.log(allSpendRecord);
+        console.log(allIncomeRecord);
     }
 }
 }, [active]); 
@@ -96,6 +98,43 @@ const handleDeleteAllSpend = async (id) => {
     }
 };
 
+const handleDeleteAllIncome = async (id) => {
+    try {
+
+    const token = localStorage.getItem('token');
+
+    const deleteRes = await axios.delete(
+    `${BASE_URL}/api/income/delete/${id}`,
+    {
+        headers: {
+        Authorization: `Bearer ${token}`,
+        },
+    }
+    );
+
+    try {
+        await monthlySpend.syncMonthlyData(token);
+    } catch (err) {
+        alert("Failed sync monthly data !!");
+    }
+
+    try {
+        await weeklySpend.syncWeeklyData(token);
+    } catch (err) {
+        alert("Failed sync weekly data !!");
+    }
+
+    initialize();
+
+    await fetchAllIncomeRecord();
+    
+    console.log("synced data succefully !!");
+
+    } catch (err) {
+    console.error('Error deleting spend:', err);
+    }
+};
+
 if (!isOpenAllSpendRecord) return null;
 
 return (
@@ -129,7 +168,9 @@ return (
         </div>
         
         <div className="records-list">
-        {allSpendRecord && allSpendRecord.length > 0 ? (
+        {
+        active === 'spent' && (
+        allSpendRecord && allSpendRecord.length > 0 ? (
             allSpendRecord.map((amount) => (
             <div key={amount._id} className="records-list-item">
                 <div className="records-item-details">
@@ -149,7 +190,7 @@ return (
 
                 </div>
                 <div className="records-item-actions">
-                <span className="records-item-amount">${Number(amount.amount).toFixed(2)}</span>
+                <span className="records-item-amount" style={{color:"#ff4444"}}>${Number(amount.amount).toFixed(2)}</span>
                 <button key={amount._id} className="delete-btn" onClick={() => handleDeleteAllSpend(amount._id)}>
                     <FiTrash2 style={{ height: '20px', width: '20px' }} />
                 </button>
@@ -158,7 +199,40 @@ return (
             ))
         ) : (
             <p className="no-records-message">No spend records found.</p>
-        )}
+        ))}
+
+        {active === 'income' && (
+
+        allIncomeRecord && allIncomeRecord.length > 0 ? (
+            allIncomeRecord.map((amount) => (
+            <div key={amount._id} className="records-list-item">
+                <div className="records-item-details">
+                <div className="records-item-title-cat">
+                    <h4>{amount.category}</h4>
+                </div>
+
+                <span className="records-item-date">
+                    {
+                    new Date(amount.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                    })}
+                </span>
+
+                </div>
+                <div className="records-item-actions">
+                <span className="records-item-amount" style={{color:"#00C851"}}>${Number(amount.amount).toFixed(2)}</span>
+                <button key={amount._id} className="delete-btn" onClick={() => handleDeleteAllIncome(amount._id)}>
+                    <FiTrash2 style={{ height: '20px', width: '20px' }} />
+                </button>
+                </div>
+            </div>
+            ))
+        ) : (
+            <p className="no-records-message">No Income records found.</p>
+        ))}
+
         </div>
 
     </div>

@@ -250,6 +250,7 @@ body::-webkit-scrollbar {
 
 .card-info {
   margin: 0;
+  padding: 0%;
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
@@ -287,10 +288,15 @@ body::-webkit-scrollbar {
 .savings-increase {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
   color: var(--positive-green) ; /* Use important to override .card-info */
   font-weight: 500;
 }
+
+.savings-increase svg{
+  margin: 3px;
+
+}
+
 
 /* Efficiency Score & Badge */
 .efficiency-score {
@@ -427,6 +433,7 @@ body::-webkit-scrollbar {
     cursor: pointer;
     font-size: 1.5rem;
     transition: color 0.3s ease;
+    justify-self: anchor-center;
 }
 
 .modal-close-btn:hover, .records-modal-close-btn:hover {

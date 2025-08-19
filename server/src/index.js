@@ -33,6 +33,7 @@ app.use('/api/chat', require('./routes/chatBot'));
 app.use('/api/MonthlySpend', require('./routes/MonthlySpend.js'));
 app.use('/api/WeeklySpend', require('./routes/WeeklySpend'));
 app.use('/api/income', require('./routes/curlIncome.js'));
+app.use('/api/incomeUtils', require('./routes/incomeUtils'));
 
 // Use environment variable for port, fallback to 5000
 const PORT = process.env.PORT || 5000;

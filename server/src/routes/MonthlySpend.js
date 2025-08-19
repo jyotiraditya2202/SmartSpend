@@ -1,12 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const axios = require('axios');
 const router = express.Router();
+
 const MonthlySpend = require('../models/MonthlyRecord');
 const User = require('../models/User');
 const SpendData = require('../models/SpendData');
+const IncomeData = require('../models/IncomeData');
 const DateUtils = require('../Utils/DateUtils');
 const auth = require('../middleware/auth');
-const axios = require('axios');
+
 
 require('dotenv').config();
 
@@ -56,10 +59,37 @@ async function insert(userId) {
     return error;
   }
 }
+// --- aggregate income of this month ---
 
+async function getIncome(userId, startDate, endDate) {
+  try {
+      const result = await IncomeData.aggregate([
+        {
+          $match: {
+            user_id: new mongoose.Types.ObjectId(userId),
+            date: { $gte: startDate, $lte: endDate }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            totalIncome: { $sum: "$amount" }
+          }
+        }
+      ]);
+
+      // If no income, return 0
+      return result.length > 0 ? result[0].totalIncome : 0;
+    } catch (err) {
+      console.error("Error in getBudget:", err);
+      throw err;
+    }
+}
+  
 // --- sync function for re-usabilty ---
 async function sync(userId) {
   try {
+   
 
     const spendCategories = [
       "Groceries",
@@ -82,6 +112,8 @@ async function sync(userId) {
 
     const StartOfMonth = DateUtils.getStartOfMonth(today);
     const EndOfMonth = DateUtils.getEndOfMonth(today);
+
+    const budget = await getIncome(userId, StartOfMonth, EndOfMonth);
 
     const spendByCategory = await SpendData.aggregate([
         {
@@ -116,7 +148,7 @@ async function sync(userId) {
     const totalSpend = Object.values(categoryTotals).reduce((acc, val) => acc + val, 0);
 
     const updateObject = {
-    budget: user.budget,
+    budget: budget,
     totalSpend: totalSpend,
     };
 
@@ -124,7 +156,7 @@ async function sync(userId) {
     updateObject[`categories.${category}`] = categoryTotals[category];
     });
 
-    const updatedRecord = await MonthlySpend.findOneAndUpdate(
+    let updatedRecord = await MonthlySpend.findOneAndUpdate(
     {
         user_id: userId,
         StartDate: StartOfMonth
@@ -141,7 +173,7 @@ async function sync(userId) {
       try {
         await insert(userId); 
 
-        updatedRecord = await MonthlySpend.findOneAndUpdate(
+        await MonthlySpend.findOneAndUpdate(
           { user_id: userId, StartDate: StartOfMonth },
           { $set: updateObject },
           { new: true }
@@ -151,9 +183,21 @@ async function sync(userId) {
       }
       catch(err){
         return err;
-      }
-      
+      }}
+
+    try{
+      await User.findOneAndUpdate(
+        {_id: userId},
+        {$set: {budget: budget}},
+        {new: true}
+      );
+
+      return "suuceffully update the user budget";
     }
+    catch(err){
+      return "cant update the user budget";
+    }
+
     return "succefully synced the data";
 
   }

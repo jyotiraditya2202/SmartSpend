@@ -14,6 +14,7 @@ export const useDashboardStore = create((set, get) => ({
     if (!token) return;
     const budget = await spendUtils.fetchBudget(token);
     set({ budget });
+  
   },
 
   // Fetch all spend data
@@ -21,6 +22,10 @@ export const useDashboardStore = create((set, get) => ({
     const token = getToken();
     if (!token) return;
     const now = new Date();
+
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
 
     // compute date ranges
     const day = now.getDay();
@@ -37,6 +42,7 @@ export const useDashboardStore = create((set, get) => ({
     endOfLastWeek.setHours(23, 59, 59, 999);
 
     const startOfThisMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+    const endOfThisMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999));
     const startOfLastMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() - 1, 1));
     const endOfLastMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 0));
 
@@ -45,16 +51,18 @@ export const useDashboardStore = create((set, get) => ({
       thisWeekSpend,
       lastWeekSpend,
       thisMonthSpend,
-      lastMonthSpend
+      lastMonthSpend,
+      upcomingSpend
     ] = await Promise.all([
       spendUtils.fetchSpend(token, startOfThisWeek, now),
       spendUtils.fetchSpend(token, startOfLastWeek, endOfLastWeek),
       spendUtils.fetchSpend(token, startOfThisMonth, now),
       spendUtils.fetchSpend(token, startOfLastMonth, endOfLastMonth),
+      spendUtils.fetchSpend(token, tomorrow, endOfThisMonth)
     ]);
 
     set({
-      spendData: { thisWeekSpend, lastWeekSpend, thisMonthSpend, lastMonthSpend }
+      spendData: { thisWeekSpend, lastWeekSpend, thisMonthSpend, lastMonthSpend, upcomingSpend }
     });
   },
 
@@ -75,9 +83,9 @@ export const useDashboardStore = create((set, get) => ({
       return;
     }
 
-    set({ 
-    budgetPercentage: (spendData.thisMonthSpend * 100) / budget
-    });
+    const percentage = ((spendData.thisMonthSpend * 100) / budget).toFixed(2);
+    set({ budgetPercentage: parseFloat(percentage) });
+    
   },
 
   computeComparePercWithLastMonth: () => {

@@ -55,9 +55,6 @@ function AddSpendModal ({ isModalOpen, setIsModelOpen }){
             const response = await spendUtils.insertSpend(data);
             console.log('Record inserted successfully:', response);
     
-            // Optionally refetch the updated data via initialize()
-            initialize();
-
             try{
                 await monthlySpend.syncMonthlyData();
             }
@@ -72,6 +69,8 @@ function AddSpendModal ({ isModalOpen, setIsModelOpen }){
             } 
             console.log("synced data succefully !!");
             
+            initialize();
+
             setIsSubmitting(false);
             setIsModelOpen(false);
     

@@ -94,12 +94,12 @@ export const getRecentSpends = async () => {
   }
 };
 
-export const getAllSpends = async () => {
+export const getAllIncome = async () => {
   try {
     const token = localStorage.getItem('token'); // assuming you store JWT token here
 
     const res = await axios.post(
-      `${BASE_URL}/api/spendutils/allSpend`,
+      `${BASE_URL}/api/incomeUtils/allIncome`,
       {},
       {
         headers: {
@@ -111,7 +111,7 @@ export const getAllSpends = async () => {
 
     return res.data;
   } catch (err) {
-    console.error('Error fetching all spends:', err);
+    console.error('Error fetching all Income:', err);
     return null;
   }
 };
