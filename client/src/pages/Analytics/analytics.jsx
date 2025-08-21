@@ -3,6 +3,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 import './analytics.css';
 import * as monthlyData from '../../api/monthlySpend';
 import * as weeklyData from '../../api/weeklySpend';
+import OverAllAnalysis from './OverAllAnalytics/OverAllAnalytics';
 
 // Reusable Icon component using inline SVG for a clean, library-free solution.
 const Icon = ({ path, className, style }) => (
@@ -263,6 +264,11 @@ const AnalyticsPage = () => {
       <div className="analytics-container">
         <div className="analytics-header">
             <h2 className="analytics-title">SmartSpend Analytics</h2>
+           
+            <div className='Nav-menu'>
+              <p>OverAll</p>
+              <p>Monthly Analysis</p>
+            </div>
             
         </div>
 
