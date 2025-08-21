@@ -1,9 +1,37 @@
 import React, { useEffect } from "react";
 import { overAllAnalyticsStore } from "../../../store/overAllAnalyticsStore";
+
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './OverAllAnalytics.css'
 
 function OverAllAnalysis(){
+
+    const Icon = ({ path, className, style }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+        style={style}
+    >
+        <path d={path} />
+    </svg>
+    );
+
+    const iconPaths = {
+        FiArrowLeft: "M19 12H5M12 19l-7-7 7-7",
+        FiDollarSign: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+        FiCalendar: "M19 4h-2V2h-2v2H9V2H7v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM12 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4z",
+        FiTag: "M20.5 12.5l-7.777 7.777a1 1 0 0 1-1.414 0L3 12.5V3h9.5L20.5 12.5zM7.5 7.5h.008v.008H7.5V7.5z",
+        FiTrendingUp: "M23 6l-9.5 9.5-5-5L1 18",
+        FiTrendingDown: "M23 18l-9.5-9.5-5 5L1 6"
+    };
 
     const COLORS = ['#4A90E2', '#27AE60', '#F5A623', '#D0021B', '#8B572A', '#50E3C2', '#9B51E0', '#AAAAAA']; 
 
@@ -27,27 +55,43 @@ function OverAllAnalysis(){
         monthlydata,
         weeklydata,
         fetchMonthlyData,
-        fetchWeeklyData
+        fetchWeeklyData,
+        yearlySpend,
+        getCurrentYearSpend,
+        yearlyIncome,
+        getCurrentYearIncome
     } = overAllAnalyticsStore();
 
     useEffect(() => {
-        fetchMonthlyData();
-        fetchWeeklyData();
+    const loadData = async () => {
+        await fetchMonthlyData();
+        await fetchWeeklyData();
+        await getCurrentYearSpend();
+        await getCurrentYearIncome();  
+    };
+    loadData();
     }, []);
+
+    console.log("yearly income frontend:");
+    console.log(yearlyIncome)
     
     return(
+
+
         <>
         <div className="summary-section">
             <div className="summary-item">
-                {/* <h4>Total Spend ({currentPeriodType})</h4>
-                <p><span className="currency">$</span>{totalOverallSpend.toFixed(2)}</p> */}
+                <h4>Current Year Spend </h4>
+                <p><span className="currency"> ${yearlySpend} </span>{}</p>
             </div>
+
             <div className="summary-item">
-                {/* <h4>Most Spent Category</h4>
-                <p>{mostSpentCategory} <Icon path={iconPaths.FiTag} style={{ height: '20px', width: '20px', color: 'var(--primary-blue)' }} /></p> */}
+                <h4>Current Year Income</h4>
+                <p><span className="currency"> ${yearlyIncome} </span></p>
             </div>
+            
             <div className="summary-item">
-                  {/* <h4>Highest Single Spend</h4>
+                {/* <h4>Highest Single Spend</h4>
                 <p><span className="currency">$</span>{highestSpendInPeriod.toFixed(2)} <Icon path={iconPaths.FiTrendingUp} style={{ height: '20px', width: '20px', color: 'var(--positive-green)' }} /></p> */}
             </div>
             <div className="summary-item">
