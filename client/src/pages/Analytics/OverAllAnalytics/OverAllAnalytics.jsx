@@ -76,23 +76,31 @@ function OverAllAnalysis(){
     console.log(yearlyIncome)
     
     return(
-
-
         <>
+        <div class="networth-banner">
+            <div>
+                <div class="networth-title">Net Worth</div>
+                    <div class="networth-value">₹ 1,20,000</div>
+                    </div>
+                        <div class="networth-change positive">
+                    <span>▲</span>
+                <span>+5.2%</span>
+            </div>
+        </div>
         <div className="summary-section">
             <div className="summary-item">
-                <h4>Current Year Spend </h4>
-                <p><span className="currency"> ${yearlySpend} </span>{}</p>
+                <h4>Current Yearly Spend </h4>
+                <p><span className="currency"> $ { yearlySpend} </span>{}</p>
             </div>
 
             <div className="summary-item">
-                <h4>Current Year Income</h4>
-                <p><span className="currency"> ${yearlyIncome} </span></p>
+                <h4>Current Yearly Income</h4>
+                <p><span className="currency"> $ { yearlyIncome} </span></p>
             </div>
             
             <div className="summary-item">
-                {/* <h4>Highest Single Spend</h4>
-                <p><span className="currency">$</span>{highestSpendInPeriod.toFixed(2)} <Icon path={iconPaths.FiTrendingUp} style={{ height: '20px', width: '20px', color: 'var(--positive-green)' }} /></p> */}
+                <h4>Average Monthly Spend</h4>
+                {/* <p><span className="currency">$</span>{highestSpendInPeriod.toFixed(2)} <Icon path={iconPaths.FiTrendingUp} style={{ height: '20px', width: '20px', color: 'var(--positive-green)' }} /></p> */}
             </div>
             <div className="summary-item">
                 {/* <h4>Lowest Single Spend</h4>

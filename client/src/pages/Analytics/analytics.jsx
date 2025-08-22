@@ -261,7 +261,18 @@ const AnalyticsPage = () => {
 
   return (
     <>
-      <OverAllAnalysis></OverAllAnalysis>
+      <div className="analytics-container">
+        <div className="analytics-header">
+            <h2 className="analytics-title">SmartSpend Analytics</h2>
+           
+            <div className='Nav-menu'>
+              <p>OverAll</p>
+              <p>Monthly Analysis</p>
+            </div>
+            
+        </div>
+        <OverAllAnalysis></OverAllAnalysis>
+      </div>
     </>
   );
 };

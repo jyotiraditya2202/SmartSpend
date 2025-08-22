@@ -42,6 +42,60 @@ body {
     cursor: pointer;
     padding: 0%;
 }
+
+.networth-banner {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    gap: 16px;
+}
+
+.networth-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.networth-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.networth-change {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.positive {
+    color: #86efac; /* green-300 */
+}
+
+.negative {
+    color: #fca5a5; /* red-300 */
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+    .networth-banner {
+    flex-direction: row;
+    }
+    .networth-title, .networth-value {
+    text-align: left;
+    }
+}
+
 .analytics-container {
     width: 100%;
     max-width: 1400px;
@@ -127,7 +181,6 @@ body {
     padding: 1rem;
     border-radius: var(--border-radius);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    width: 96%;
     margin-bottom: 2rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
