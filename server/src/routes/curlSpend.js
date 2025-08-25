@@ -36,6 +36,35 @@ router.post('/insert',auth, async (req, res) => {
   }
 });
 
+// @route   POST /api/spend/upcominInsert
+// @desc    inserting the spend
+
+router.post('/upcomingInsert',auth, async (req, res) => {
+  try {
+    console.log("Inserting the spend record");
+
+    const user_id = req.user.user.id;
+    console.log(user_id);
+    const { title, category, type ,amount, date } = req.body;
+
+    const newSpend = new SpendData({
+      user_id,
+      title,
+      category,
+      amount,
+      type,
+      date
+    });
+
+    await newSpend.save();
+
+    res.status(201).json({ message: 'Spend record inserted successfully', data: newSpend });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to insert spend record' });
+  }
+});
+
 // @route   DELETE /api/spend/delete/:id
 // @desc    Delete a spend record by ID for the logged-in user
 

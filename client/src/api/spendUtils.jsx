@@ -70,6 +70,24 @@ export const insertSpend = async (data) => {
   return response.data;
 };
 
+export const insertUpcomingSpend = async (data) => {
+  const token = localStorage.getItem('token'); // or however you store your auth token
+
+  const response = await axios.post(
+    `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/spend/upcomingInsert`,
+    data,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+
 export const getRecentSpends = async () => {
   try {
     const token = localStorage.getItem('token'); // assuming you store JWT token here

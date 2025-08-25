@@ -16,6 +16,7 @@ import NavigatorButton from '../../components/NavigatorButton/NavigatorButton';
 import AllRecordsModal from '../AllRecords/allRecords';
 import AddSpendModal from '../AddSpend/addSpend';
 import AddIncomeModal from '../AddIncome/addIncome';
+import AddUpcomingSpendModal from '../AddUpcomingSpend/addUpcomingSpend';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Use Vite style env if applicable
 
@@ -65,6 +66,9 @@ const Dashboard = () => {
 
   const handleAddSpend = () => {
     setIsModalOpen('spent');
+  };
+  const handleAddUpcomingSpend = () => {
+    setIsModalOpen('upcomingSpent');
   };
   const handleAddIncome = () => {
     setIsModalOpen('income');
@@ -180,7 +184,11 @@ const Dashboard = () => {
           <div>
             <div className="card-header">
               <h3>Upcoming Spends</h3>
-              <FiBarChart2 className="card-icon" />
+
+              <button className="dash-btn" onClick={handleAddUpcomingSpend}>
+                <FiPlus className="card-icon" />
+              </button>
+
             </div>
             
             <h2 className="card-value">${spendData.upcomingSpend}</h2>
@@ -252,6 +260,14 @@ const Dashboard = () => {
       {
       isModalOpen === "income" && (
         <AddIncomeModal
+          isModalOpen={isModalOpen}
+          setIsModelOpen={setIsModalOpen}
+        />
+      )
+      }
+      {
+      isModalOpen === "upcomingSpent" && (
+        <AddUpcomingSpendModal
           isModalOpen={isModalOpen}
           setIsModelOpen={setIsModalOpen}
         />
