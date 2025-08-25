@@ -193,7 +193,9 @@ const Dashboard = () => {
             
             <h2 className="card-value">${spendData.upcomingSpend}</h2>
             {console.log(spendData.upcomingSpend)}
+          
           </div>
+            <p className="card-info">Projected Spend ${spendData.thisMonthSpend+spendData.upcomingSpend}</p>
         </div>
 
         {/* Card 4: Efficiency Score */}

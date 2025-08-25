@@ -105,7 +105,6 @@ export const overAllAnalyticsStore = create((set, get) => ({
         console.log(get().yearlyIncome);
         return total;
     }
-
 })
 )
 
