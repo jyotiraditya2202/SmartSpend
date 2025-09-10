@@ -17,23 +17,12 @@ import AllRecordsModal from '../AllRecords/allRecords';
 import AddSpendModal from '../AddSpend/addSpend';
 import AddIncomeModal from '../AddIncome/addIncome';
 import AddUpcomingSpendModal from '../AddUpcomingSpend/addUpcomingSpend';
+import MonthYearPicker from '../../components/MonthYearPicker/MonthYearPicker';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Use Vite style env if applicable
 
 
 // model
-
-const incomeCategories = [
-  "Salary",
-  "Freelance ",
-  "Business Revenue",
-  "Investments ",
-  "Rental Income",
-  "Gifts / Grants",
-  "Refunds / Reimbursements",
-  "Other Income"
-];
-
 const Dashboard = () => {
 
     const navigate = useNavigate();
@@ -110,7 +99,6 @@ const Dashboard = () => {
   if (!spendData) {
     return <p>Loading...</p>;
   }
-
   return (
     <>
     <div className="dashboard-container">
@@ -121,10 +109,13 @@ const Dashboard = () => {
 
 
         {/* view all record */}
-        <button className="add-spend-btn" onClick={() => setIsRecordsModalOpen(true)}>
+        {/* <button className="add-spend-btn" onClick={() => setIsRecordsModalOpen(true)}>
             <FiList style={{ height: '20px', width: '20px', strokeWidth: '3' }} />
             View All Transaction
-        </button>
+        </button> */}
+        <div className="add-spend-btn" >
+          <MonthYearPicker/>
+        </div>
 
         </div>
 
@@ -136,7 +127,7 @@ const Dashboard = () => {
         <div className="card">
           <div> {/* Top content wrapper */}
             <div className="card-header">
-              <h3>Monthly Budget</h3>
+              <h3>Income</h3>
 
               <button className="dash-btn" onClick={handleAddIncome}>
                 <FiPlus className="card-icon" />
@@ -159,7 +150,7 @@ const Dashboard = () => {
         <div className="card">
           <div>
             <div className="card-header">
-              <h3>Spent This Month</h3>
+              <h3>Expence</h3>
               <button className="dash-btn" onClick={handleAddSpend}>
                 <FiPlus className="card-icon" />
               </button>
@@ -183,7 +174,7 @@ const Dashboard = () => {
         <div className="card">
           <div>
             <div className="card-header">
-              <h3>Upcoming Spends</h3>
+              <h3>Upcoming Expence</h3>
 
               <button className="dash-btn" onClick={handleAddUpcomingSpend}>
                 <FiPlus className="card-icon" />
@@ -195,19 +186,19 @@ const Dashboard = () => {
             {console.log(spendData.upcomingSpend)}
           
           </div>
-            <p className="card-info">Projected Spend ${spendData.thisMonthSpend+spendData.upcomingSpend}</p>
+            <p className="card-info">Projected Expence ${spendData.thisMonthSpend+spendData.upcomingSpend}</p>
         </div>
 
         {/* Card 4: Efficiency Score */}
         <div className="card">
           <div>
             <div className="card-header">
-              <h3>Efficiency Score</h3>
+              <h3>Total Remaining</h3>
               <FiTrendingUp className="card-icon" />
             </div>
 
             <div className="efficiency-score">
-            <h2 className="card-value">{efficiencyScore}%</h2>
+            <h2 className="card-value">${monthRemaining}</h2>
             <span className="great-badge">{efficiencyBadge}</span>
             </div>
 
@@ -215,8 +206,12 @@ const Dashboard = () => {
           <p className="card-info">Based on spending habits</p>
         </div>
 
+        {/* spend pi chart */}
+
+
+
         {/* recent spend data */}
-        <div className="recent-spends-container">
+        {/* <div className="recent-spends-container">
             <h2>Recent Spends</h2>
             <ul className="recent-spends-list">
                 {recentSpends.map((amount) => (
@@ -245,7 +240,7 @@ const Dashboard = () => {
                     </li>
                 ))}
             </ul>
-        </div>
+        </div> */}
 
       </main>
       ):(
@@ -281,8 +276,8 @@ const Dashboard = () => {
         isOpenAllSpendRecord={isRecordsModalOpen}
         setIsOpenAllSpendRecord={setIsRecordsModalOpen}
         />
-        
       )}
+
 
     <NavigatorButton></NavigatorButton>
     </>

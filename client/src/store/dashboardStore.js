@@ -3,10 +3,23 @@ import * as spendUtils from '../api/spendUtils';
 
 const getToken = () => localStorage.getItem('token');
 
+const today = new Date();
+
+
 export const useDashboardStore = create((set, get) => ({
   budget: null,
   spendData: null,
   monthRemaining: null,
+  month: today.getMonth(),
+  year: today.getFullYear(),
+
+  setMonth: (month) => {
+    set({ month });
+  },
+
+  setYear: (year) => {
+    set({ year });
+  },
 
   // Fetch budget from API
   fetchBudget: async () => {
@@ -14,13 +27,13 @@ export const useDashboardStore = create((set, get) => ({
     if (!token) return;
     const budget = await spendUtils.fetchBudget(token);
     set({ budget });
-  
   },
 
   // Fetch all spend data
   fetchSpendData: async () => {
     const token = getToken();
     if (!token) return;
+    
     const now = new Date();
 
     const tomorrow = new Date(now);

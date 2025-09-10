@@ -1,138 +1,187 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const router = express.Router();
-const User = require('../models/User');
-const SpendData = require('../models/SpendData');
-const auth = require('../middleware/auth');
+  const express = require('express');
+  const mongoose = require('mongoose');
+  const router = express.Router();
+  const User = require('../models/User');
+  const SpendData = require('../models/SpendData');
+  const IncomeData = require('../models/IncomeData');
+  const auth = require('../middleware/auth');
 
-require('dotenv').config();
+  require('dotenv').config();
 
-// @route   POST /api/spendutils/getbudget
-// @desc    it gives budget od the user 
+  // @route   POST /api/spendutils/getbudget
+  // @desc    it gives budget od the user 
 
-router.post('/getbudget', auth, async (req, res) => {
-  try {
+  router.post('/getbudget', auth, async (req, res) => {
+    try {
 
-    const userId = req.user.user.id;
+      const userId = req.user.user.id;
 
-    const user = await User.findOne({_id: userId});
+      const user = await User.findOne({_id: userId});
 
-    if(!user){
-        return res.status(404).json({error: 'user not found while fetching budget'});
+      if(!user){
+          return res.status(404).json({error: 'user not found while fetching budget'});
+      }
+
+      const budget = user.budget;
+
+      if(budget == null){
+          return res.status(200).json({budget: null});
+      }
+      res.status(200).json({ budget: budget });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    const budget = user.budget;
+  // @route   POST /api/spendutils/getammount
+  // @desc    in req give the start and end date and it will give the total spen between them
 
-    if(budget == null){
-        return res.status(200).json({budget: null});
-    }
-    res.status(200).json({ budget: budget });
+  router.post('/getammount', auth, async (req, res) => {
+    try {
+      const { start_date, last_date } = req.body;
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+      if (!start_date || !last_date) {
+        return res.status(400).json({ error: 'start_date and last_date are required' });
+      }
 
-// @route   POST /api/spendutils/getammount
-// @desc    in req give the start and end date and it will give the total spen between them
+      const startDate = new Date(start_date);
+      const endDate = new Date(last_date);
 
-router.post('/getammount', auth, async (req, res) => {
-  try {
-    const { start_date, last_date } = req.body;
+      if (startDate > endDate) {
+        return res.status(400).json({ error: 'start_date must be earlier than last_date' });
+      }
 
-    if (!start_date || !last_date) {
-      return res.status(400).json({ error: 'start_date and last_date are required' });
-    }
+      const userId = req.user.user.id;
 
-    const startDate = new Date(start_date);
-    const endDate = new Date(last_date);
-
-    if (startDate > endDate) {
-      return res.status(400).json({ error: 'start_date must be earlier than last_date' });
-    }
-
-    const userId = req.user.user.id;
-
-    const totalSpend = await SpendData.aggregate([
-      {
-        $match: {
-          user_id: new mongoose.Types.ObjectId(userId),
-          date: {
-            $gte: startDate,
-            $lte: endDate
+      const totalSpend = await SpendData.aggregate([
+        {
+          $match: {
+            user_id: new mongoose.Types.ObjectId(userId),
+            date: {
+              $gte: startDate,
+              $lte: endDate
+            }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$amount" }
           }
         }
-      },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: "$amount" }
-        }
+      ]);
+
+      const total = totalSpend[0]?.total || 0;
+
+      res.status(200).json({ total_spent: total });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // @route   POST /api/spendutils/getincome
+  // @desc    in req give the start and end date and it will give the total spen between them
+
+  router.post('/getincome', auth, async (req, res) => {
+    try {
+      const { start_date, last_date } = req.body;
+
+      if (!start_date || !last_date) {
+        return res.status(400).json({ error: 'start_date and last_date are required' });
       }
-    ]);
 
-    const total = totalSpend[0]?.total || 0;
+      const startDate = new Date(start_date);
+      const endDate = new Date(last_date);
 
-    res.status(200).json({ total_spent: total });
+      if (startDate > endDate) {
+        return res.status(400).json({ error: 'start_date must be earlier than last_date' });
+      }
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+      const userId = req.user.user.id;
 
-module.exports = router;
+      const totalSpend = await IncomeData.aggregate([
+        {
+          $match: {
+            user_id: new mongoose.Types.ObjectId(userId),
+            date: {
+              $gte: startDate,
+              $lte: endDate
+            }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$amount" }
+          }
+        }
+      ]);
 
-// @route   POST /api/spendutils/recentSpend
-// @desc    recentSpendRecords 
+      const total = totalSpend[0]?.total || 0;
 
-router.post('/recentSpend', auth, async (req, res) => {
-  try {
-    const userId = req.user.user.id;
+      res.status(200).json({ total_spent: total });
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found while fetching budget' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    // Get last 5 spends by this user, sorted by latest
-    const recentSpends = await SpendData.find({ user_id: userId })
-      .sort({ date: -1 }) // assuming you have timestamps
-      .limit(5)
-      .select('title category amount date');
+  // @route   POST /api/spendutils/recentSpend
+  // @desc    recentSpendRecords 
 
-    console.log(recentSpends);
-    res.status(200).json(recentSpends);
+  router.post('/recentSpend', auth, async (req, res) => {
+    try {
+      const userId = req.user.user.id;
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found while fetching budget' });
+      }
 
-// @route   POST /api/spendutils/allSpend
-// @desc    recentSpendRecords 
+      // Get last 5 spends by this user, sorted by latest
+      const recentSpends = await SpendData.find({ user_id: userId })
+        .sort({ date: -1 }) // assuming you have timestamps
+        .limit(5)
+        .select('title category amount date');
 
-router.post('/allSpend', auth, async (req, res) => {
-  try {
-    const userId = req.user.user.id;
+      console.log(recentSpends);
+      res.status(200).json(recentSpends);
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found while fetching budget' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    // Get last 5 spends by this user, sorted by latest
-    const recentSpends = await SpendData.find({ user_id: userId })
-      .sort({ date: -1 }) // assuming you have timestamps
-      .select('title category amount date');
+  // @route   POST /api/spendutils/allSpend
+  // @desc    recentSpendRecords 
 
-    console.log(recentSpends);
-    res.status(200).json(recentSpends);
+  router.post('/allSpend', auth, async (req, res) => {
+    try {
+      const userId = req.user.user.id;
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found while fetching budget' });
+      }
+
+      // Get last 5 spends by this user, sorted by latest
+      const recentSpends = await SpendData.find({ user_id: userId })
+        .sort({ date: -1 }) // assuming you have timestamps
+        .select('title category amount date');
+
+      console.log(recentSpends);
+      res.status(200).json(recentSpends);
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  module.exports = router;

@@ -1,0 +1,34 @@
+.picker-container {
+  display: flex;
+  align-items: center;
+  background: transparent;
+
+}
+
+.picker-section {
+  display: flex;
+  align-items: center;
+  flex-direction: column; /* month and year are separate columns */
+  background: transparent;
+}
+
+.custom-box {
+  font-size: 20px;         
+  border-radius: 0.5rem;
+  margin: 5px;     
+  user-select: none;          
+  cursor: ns-resize;          
+  text-align: center;
+
+}
+
+.nav-button {
+  background: transparent;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+
+}
+
+

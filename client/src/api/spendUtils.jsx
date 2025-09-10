@@ -53,6 +53,31 @@ export const fetchSpend = async (token, startDate, endDate) => {
   }
 };
 
+export const fetchIncome = async (token, startDate, endDate) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/spendutils/getincome`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        start_date: startDate.toISOString(),
+        last_date: endDate.toISOString(),
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.error || "Error fetching spend data");
+
+    return data.total_spent;
+  } catch (error) {
+    console.error("fetchSpend error:", error);
+    return null;
+  }
+};
+
 export const insertSpend = async (data) => {
   const token = localStorage.getItem('token'); // or however you store your auth token
 
