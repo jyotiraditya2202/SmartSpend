@@ -5,7 +5,6 @@ import { useDashboardStore } from '../../store/dashboardStore.js';
 
 const MonthYearPicker = () => {
   const {
-
       month,
       year,
       setMonth,
@@ -60,7 +59,7 @@ const MonthYearPicker = () => {
       <div className="picker-section">
         <div 
           className="custom-box"
-          onWheel={(e) => changeYear(e.deltaY > 0 ? 1 : -1)}
+          onWheel={(e) => changeYear(e.deltaY > 0 ? 2 : -1)}
         >
           {year}
         </div>

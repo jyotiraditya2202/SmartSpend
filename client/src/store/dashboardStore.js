@@ -15,28 +15,55 @@ export const useDashboardStore = create((set, get) => ({
 
   setMonth: (month) => {
     set({ month });
+    console.log("seted month", month);
+    get().fetchSpendData();
+    get().fetchBudget();  
   },
 
   setYear: (year) => {
     set({ year });
+    console.log("seted year", year);
+    get().fetchSpendData();
+    get().fetchBudget();  
   },
 
   // Fetch budget from API
   fetchBudget: async () => {
-    const token = getToken();
-    if (!token) return;
-    const budget = await spendUtils.fetchBudget(token);
-    set({ budget });
+  const { month, year } = get(); // month = 0-based (0 = Jan, 8 = Sep)
+
+  const token = getToken();
+  if (!token) return;
+
+  // Start of this month
+  const startOfThisMonth = new Date(year, month, 1, 0, 0, 0, 0);
+
+  // End of this month (last day, 23:59:59.999)
+  const endOfThisMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
+
+  const budget = await spendUtils.fetchIncome(token, startOfThisMonth, endOfThisMonth);
+
+  console.log("income:", budget);
+  set({ budget });
+
+  get().computeMonthRemaining();
+
   },
 
   // Fetch all spend data
   fetchSpendData: async () => {
+    const { month, year } = get();
+
     const token = getToken();
-    if (!token) return;
-    
+    if (!token) return;    
+
+    const monthIndex = new Date(`${month} 1 , ${year}`).getMonth() + 1;
+
+    const nowUtil = new Date(year, monthIndex, 1);
+    nowUtil.setHours(0, 0, 0, 0);
+
     const now = new Date();
 
-    const tomorrow = new Date(now);
+    const tomorrow = new Date();
     tomorrow.setDate(now.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
 
@@ -54,10 +81,10 @@ export const useDashboardStore = create((set, get) => ({
     endOfLastWeek.setDate(endOfLastWeek.getDate() - 1);
     endOfLastWeek.setHours(23, 59, 59, 999);
 
-    const startOfThisMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
-    const endOfThisMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999));
-    const startOfLastMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() - 1, 1));
-    const endOfLastMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 0));
+    const startOfThisMonth = new Date(Date.UTC(nowUtil.getFullYear(), nowUtil.getMonth(), 1));
+    const endOfThisMonth = new Date(Date.UTC(nowUtil.getFullYear(), nowUtil.getMonth() + 1, 0, 23, 59, 59, 999));
+    const startOfLastMonth = new Date(Date.UTC(nowUtil.getFullYear(), nowUtil.getMonth() - 1, 1));
+    const endOfLastMonth = new Date(Date.UTC(nowUtil.getFullYear(), nowUtil.getMonth(), 0));
 
     // parallel requests
     const [
@@ -66,18 +93,24 @@ export const useDashboardStore = create((set, get) => ({
       thisMonthSpend,
       lastMonthSpend,
       upcomingSpend
-    ] = await Promise.all([
+    ] = (await Promise.all([
       spendUtils.fetchSpend(token, startOfThisWeek, now),
       spendUtils.fetchSpend(token, startOfLastWeek, endOfLastWeek),
-      spendUtils.fetchSpend(token, startOfThisMonth, now),
+      spendUtils.fetchSpend(token, startOfThisMonth, endOfThisMonth),
       spendUtils.fetchSpend(token, startOfLastMonth, endOfLastMonth),
       spendUtils.fetchSpend(token, tomorrow, endOfThisMonth)
-    ]);
+    ])).map(v => v ?? 0);
+
+    console.log("start of this month:", startOfThisMonth);
+    console.log("end of this month:", endOfThisMonth);
+    console.log("this month spend:", thisMonthSpend);
 
     set({
       spendData: { thisWeekSpend, lastWeekSpend, thisMonthSpend, lastMonthSpend, upcomingSpend }
     });
-  },
+
+    get().computeMonthRemaining();
+    },
 
   // Compute remaining budget
   computeMonthRemaining: () => {
@@ -86,6 +119,9 @@ export const useDashboardStore = create((set, get) => ({
       set({ monthRemaining: null });
       return;
     }
+    // if(!spendData){
+    //   set({ monthRemaining: budget })
+    // }
     set({ monthRemaining: budget - spendData.thisMonthSpend });
   },
 
@@ -179,11 +215,14 @@ export const useDashboardStore = create((set, get) => ({
 
   // One-shot: load everything
   initialize: async () => {
+    const today = new Date();
+    get().setMonth(today.getMonth()); 
+    get().setYear(today.getFullYear());
     await get().fetchBudget();
     await get().fetchSpendData();
     get().computeMonthRemaining();
     get().computeBudgetPercentage();
     get().computeComparePercWithLastMonth();
-    get().computeEfficiencyScore();
+    get().computeEfficiencyScore(); 
   }
 }));
